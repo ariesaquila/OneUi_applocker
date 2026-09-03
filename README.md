@@ -84,67 +84,6 @@ OneUi_applocker/
 │   │           └── settings/           # Kilit türü, yeniden kilitleme, tema ayarları
 ```
 
----
-
-## 📦 APK Olarak Dışarı Aktarma (Export APK)
-
-Uygulamanızı telefonunuza yüklemek veya arkadaşlarınızla paylaşmak için APK dosyasını 2 şekilde üretebilirsiniz:
-
-### Yöntem 1: Android Studio ile Hızlı Debug APK
-1. Android Studio'da projeyi açın.
-2. Üst menüden: **Build > Build Bundle(s) / APK(s) > Build APK(s)** seçeneğine tıklayın.
-3. Derleme tamamlandığında sağ alt köşede beliren bildirimde **"locate"** butonuna tıklayın.
-4. APK dosyanız hazırdır:
-   `app/build/outputs/apk/debug/app-debug.apk`
-
-### Yöntem 2: Dağıtım İçin İmzalı (Signed Release) APK
-1. Android Studio'da: **Build > Generate Signed Bundle / APK...** menüsüne girin.
-2. **APK** seçeneğini işaretleyip **Next**'e basın.
-3. Bir anahtar dosyası (Key store path) seçin veya **Create new...** ile yeni bir anahtar oluşturun.
-4. Build Variants kısmında **release** seçin ve **Finish**'e tıklayın.
-5. Oluşan optimize edilmiş dosya:
-   `app/release/app-release.apk`
-
----
-
-## 🚀 GitHub'da Paylaşma Adımları
-
-### 1. Yerel Git Deposunu Başlatma ve Commit
-Terminali (veya PowerShell'i) proje klasöründe açıp şu komutları sırasıyla çalıştırın:
-
-```bash
-# Git deposunu başlatın
-git init
-
-# Dosyaları ekleyin (.gitignore gereksiz dosyaları otomatik hariç tutar)
-git add .
-
-# İlk commit'i yapın
-git commit -m "feat: Initial commit - One UI App Locker with Compose & Zero Latency"
-```
-
-### 2. GitHub'da Depo Açıp Yükleme (Push)
-1. [GitHub](https://github.com/new) adresine gidin.
-2. Repository name olarak `OneUi_applocker` yazın ve **Public** seçin (README veya .gitignore eklemeyin, projede zaten hazır).
-3. **Create repository** butonuna basın.
-4. Terminalde aşağıdaki komutları çalıştırın (kendi kullanıcı adınızı yazın):
-
-```bash
-git branch -M main
-git remote add origin https://github.com/<KULLANICI_ADINIZ>/OneUi_applocker.git
-git push -u origin main
-```
-
-### 3. APK'yı GitHub'da İndirilebilir Hale Getirme (Releases)
-1. GitHub deponuzun sağ tarafındaki **"Releases"** bölümüne gidin.
-2. **"Draft a new release"** (Yeni sürüm oluştur) butonuna tıklayın.
-3. **Tag version:** `v1.0.0` yazın.
-4. **Release title:** `One UI App Locker v1.0.0 - İlk Kararlı Sürüm` yazın.
-5. Alt kısımdaki kutucuğa ürettiğiniz `.apk` dosyasını sürükleyip bırakın.
-6. **"Publish release"** butonuna basın. Artık herkes APK'yı doğrudan indirebilir!
-
----
-
 ## 📄 Lisans
 
 Bu proje [MIT Lisansı](LICENSE) altında lisanslanmıştır.
