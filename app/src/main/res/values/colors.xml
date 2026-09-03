@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- One UI Brand Colors -->
+    <color name="oneui_blue">#0381FE</color>
+    <color name="oneui_blue_dark">#026BD2</color>
+    <color name="oneui_blue_light">#EBF4FF</color>
+    <color name="oneui_blue_subtle">#1A0381FE</color>
+
+    <!-- Backgrounds & Surfaces -->
+    <color name="oneui_bg_light">#F2F4F8</color>
+    <color name="oneui_card_light">#FFFFFF</color>
+    <color name="oneui_bg_dark">#121212</color>
+    <color name="oneui_card_dark">#1E1F22</color>
+
+    <!-- Typography -->
+    <color name="oneui_text_primary_light">#1C1C1E</color>
+    <color name="oneui_text_secondary_light">#8E8E93</color>
+    <color name="oneui_text_primary_dark">#F5F5F7</color>
+    <color name="oneui_text_secondary_dark">#98989E</color>
+
+    <!-- Semantic / Status -->
+    <color name="oneui_green">#34C759</color>
+    <color name="oneui_red">#FF3B30</color>
+    <color name="oneui_orange">#FF9500</color>
+    <color name="oneui_divider_light">#E5E5EA</color>
+    <color name="oneui_divider_dark">#2C2C2E</color>
+</resources>

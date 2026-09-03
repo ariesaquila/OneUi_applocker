@@ -1,0 +1,85 @@
+<resources>
+    <string name="app_name">One UI AppLocker</string>
+    <string name="accessibility_service_name">One UI Kilit Algılama Servisi</string>
+    <string name="accessibility_service_description">Kilitlediğiniz uygulamaların açılış anını sıfır gecikmeyle algılamak ve kilit ekranını göstermek için kullanılır. Hiçbir kişisel veri okunmaz veya kaydedilmez.</string>
+
+    <!-- Foreground Service -->
+    <string name="foreground_service_channel_name">Uygulama Kilidi Koruması</string>
+    <string name="foreground_service_channel_desc">Uygulama kilitleme servisinin arka planda sürekli ve kararlı çalışmasını sağlar.</string>
+    <string name="notification_protection_active_title">Uygulama Kilidi Aktif</string>
+    <string name="notification_protection_active_content">Uygulamalarınız One UI güvenlik kalkanı ile korunuyor.</string>
+
+    <!-- Home Screen -->
+    <string name="title_home">Uygulama Kilidi</string>
+    <string name="subtitle_home">%d uygulama koruma altında</string>
+    <string name="search_apps_hint">Uygulama ara…</string>
+    <string name="filter_all">Hepsi</string>
+    <string name="filter_locked">Kilitli</string>
+    <string name="filter_unlocked">Kilitsiz</string>
+    <string name="filter_system">Sistem</string>
+    <string name="empty_apps">Uygulama bulunamadı</string>
+    <string name="system_app_tag">Sistem</string>
+    <string name="lock_all">Tümünü Kilitle</string>
+    <string name="unlock_all">Tümünü Aç</string>
+
+    <!-- Permissions Wizard -->
+    <string name="title_permissions">Gerekli İzinler</string>
+    <string name="subtitle_permissions">Kusursuz ve kesintisiz koruma için lütfen aşağıdaki izinleri etkinleştirin.</string>
+    <string name="perm_granted">Etkin</string>
+    <string name="perm_grant_action">Etkinleştir</string>
+    <string name="perm_all_granted_title">Her Şey Hazır!</string>
+    <string name="perm_all_granted_desc">Tüm izinler başarıyla verildi. Uygulamalarınızı hemen kilitlemeye başlayabilirsiniz.</string>
+    <string name="btn_continue">Devam Et</string>
+
+    <!-- Permission Items -->
+    <string name="perm_overlay_title">Üzerinde Gösterme İzni</string>
+    <string name="perm_overlay_desc">Kilitli bir uygulama açıldığında One UI kilit ekranını doğrudan uygulamanın üzerine getirmek için gereklidir.</string>
+
+    <string name="perm_usage_title">Kullanım Erişimi</string>
+    <string name="perm_usage_desc">Hangi uygulamanın başlatıldığını sistem düzeyinde tespit edebilmek için gereklidir.</string>
+
+    <string name="perm_accessibility_title">Erişilebilirlik Servisi (Önerilen)</string>
+    <string name="perm_accessibility_desc">Sıfır gecikmeyle (0 ms) kilit ekranını açar ve pil tüketimini en aza indirir.</string>
+
+    <string name="perm_battery_title">Pil Optimizasyonunu Yoksay</string>
+    <string name="perm_battery_desc">Sistemin arka plan korumasını uyku moduna alarak durdurmasını önler.</string>
+
+    <string name="perm_notification_title">Bildirim İzni</string>
+    <string name="perm_notification_desc">Android 13 ve üzerinde arka plan servisinin kesintisiz çalışması için bildirim gösterir.</string>
+
+    <!-- Lock Screen -->
+    <string name="lock_title_enter_pin">PIN Kodunu Girin</string>
+    <string name="lock_title_enter_pattern">Deseni Çizin</string>
+    <string name="lock_subtitle">Bu uygulamayı açmak için doğrulama yapın</string>
+    <string name="lock_wrong_pin">Hatalı PIN, lütfen tekrar deneyin</string>
+    <string name="lock_wrong_pattern">Hatalı desen, lütfen tekrar deneyin</string>
+    <string name="biometric_prompt_title">Kimlik Doğrulama</string>
+    <string name="biometric_prompt_subtitle">Kilitli uygulamayı açmak için parmak izinizi okutun</string>
+    <string name="biometric_prompt_negative">PIN ile Aç</string>
+
+    <!-- Settings -->
+    <string name="title_settings">Ayarlar</string>
+    <string name="settings_section_security">Güvenlik</string>
+    <string name="settings_lock_type">Kilit Türü</string>
+    <string name="settings_lock_type_pin">PIN Kodu</string>
+    <string name="settings_lock_type_pattern">Desen</string>
+    <string name="settings_change_credentials">Şifreyi Değiştir</string>
+    <string name="settings_biometrics">Biyometrik Kilit</string>
+    <string name="settings_biometrics_desc">Parmak izi veya yüz tanıma ile anında kilit aç</string>
+    <string name="settings_section_behavior">Kilitleme Davranışı</string>
+    <string name="settings_relock_policy">Yeniden Kilitleme Süresi</string>
+    <string name="relock_immediately">Anında (Uygulamadan çıkıldığı an)</string>
+    <string name="relock_screen_off">Ekran kapandığında</string>
+    <string name="relock_after_one_min">1 dakika sonra</string>
+    <string name="relock_after_five_min">5 dakika sonra</string>
+    <string name="settings_vibration">Titreşimle Geri Bildirim</string>
+    <string name="settings_vibration_desc">Tuşlara basıldığında veya hatalı denemede hafif titreşim</string>
+
+    <!-- Theme / Appearance -->
+    <string name="settings_section_appearance">Görünüm</string>
+    <string name="settings_theme">Uygulama Teması</string>
+    <string name="theme_system">Sistem Varsayılanı</string>
+    <string name="theme_system_desc">Cihazın açık/koyu mod ayarını otomatik takip eder</string>
+    <string name="theme_light">Açık Tema</string>
+    <string name="theme_dark">Koyu Tema</string>
+</resources>

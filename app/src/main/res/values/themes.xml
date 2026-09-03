@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base Application Theme -->
+    <style name="Theme.OneUiAppLocker" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/oneui_bg_light</item>
+        <item name="android:navigationBarColor">@color/oneui_bg_light</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+
+    <!-- Overlay Lock Screen Theme -->
+    <style name="Theme.OneUiAppLocker.LockScreen" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowBackground">@color/oneui_bg_light</item>
+        <item name="android:statusBarColor">@color/oneui_bg_light</item>
+        <item name="android:navigationBarColor">@color/oneui_bg_light</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+    </style>
+</resources>
