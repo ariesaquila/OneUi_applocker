@@ -9,6 +9,10 @@
 </p>
 
 <p align="center">
+  <a href="README.md">🇹🇷 <b>Türkçe</b></a> &nbsp;•&nbsp; <a href="README.en.md">🇬🇧 <b>English</b></a>
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/Platform-Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android" />
   <img src="https://img.shields.io/badge/Language-Kotlin%202.0-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white" alt="Kotlin" />
   <img src="https://img.shields.io/badge/UI-Jetpack%20Compose-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white" alt="Compose" />
@@ -27,6 +31,8 @@
 - **Dinamik Tema Sistemi:** 
   - **Sistem Varsayılanı:** Cihazın açık/koyu modunu otomatik takip eder.
   - **Açık Mod & Koyu Mod (One UI Dark):** Manuel seçim desteği.
+  - **AMOLED Siyah:** OLED ekranlar için saf siyah arka plan ve maksimum pil tasarrufu.
+- **Donanım Yenileme Hızı Senkronizasyonu:** Ekranı cihazın panel hızına (90Hz / 120Hz / 144Hz) kilitleyerek mikro takılmaları önler.
 - **Gizlilik Odaklı İkon:** Mat antrasit-siyah zemin üzerinde fırçalanmış titanyum gümüş kilit simgesi.
 
 ### 2. ⚡ Sıfır Gecikme (0-Latency) & Doğal Görev Yığını
@@ -36,6 +42,10 @@
 - **Yedek Koruma:** Erişilebilirlik kapalı olsa dahi pil dostu `UsageStatsManager` servisi devreye girer.
 
 ### 3. 🔒 Gelişmiş Güvenlik & Gizlilik
+- **Çift Modlu Kilit (PIN & Desen):**
+  - **4 Haneli PIN:** One UI sayı tuş takımı ve anlık hata titreşimi.
+  - **Akıllı Desen (Pattern):** Doğrusal ara noktaları otomatik birleştiren (intermediate bridging) 3x3 One UI desen kilidi.
+- **Şifre Sıfırlama & Kurtarma (Password Recovery):** Şifrenizi unutmanız durumunda tuzlanmış (salted) SHA-256 ile korunan güvenlik sorusunu yanıtlayarak veya biyometri ile kilidi açıp anında sıfırlayabilme.
 - **Son Uygulamalar (Recents) Gizliliği (`FLAG_SECURE`):** Görev yöneticisinde ve ekran görüntüsü alırken uygulamanın içi tamamen siyah olarak gizlenir.
 - **Görev Yöneticisi Koruması:** Kullanıcı son uygulamalar menüsüne geçtiği an aktif kilit oturumu sıfırlanır; karttan geri dönüldüğünde anında kilit ekranı araya girer.
 - **Esnek Yeniden Kilitleme:**
