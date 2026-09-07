@@ -14,9 +14,13 @@
     <string name="subtitle_home">%d uygulama koruma altında</string>
     <string name="search_apps_hint">Uygulama ara…</string>
     <string name="filter_all">Hepsi</string>
+    <string name="filter_downloaded">İndirilenler</string>
+    <string name="filter_system">Sistem</string>
     <string name="filter_locked">Kilitli</string>
     <string name="filter_unlocked">Kilitsiz</string>
-    <string name="filter_system">Sistem</string>
+    <string name="section_downloaded_apps">İndirilen Uygulamalar</string>
+    <string name="section_system_apps">Sistem Uygulamaları</string>
+    <string name="apps_count_suffix">%d uygulama</string>
     <string name="empty_apps">Uygulama bulunamadı</string>
     <string name="system_app_tag">Sistem</string>
     <string name="lock_all">Tümünü Kilitle</string>
@@ -46,6 +50,11 @@
 
     <string name="perm_notification_title">Bildirim İzni</string>
     <string name="perm_notification_desc">Android 13 ve üzerinde arka plan servisinin kesintisiz çalışması için bildirim gösterir.</string>
+
+    <!-- Restricted Settings Guide (Android 13+) -->
+    <string name="perm_restricted_title">Erişilebilirlik İzni Kilitli mi?</string>
+    <string name="perm_restricted_desc">Android 13 ve üzerinde sistem, Play Store dışından kurulan uygulamalarda bu izni \"Kısıtlanmış ayar\" olarak kilitleyebilir.\n\nKilidi açmak için:\n1. Aşağıdaki butondan Uygulama Bilgisi\'ni açın.\n2. Sağ üst köşedeki üç noktaya (⋮) dokunun.\n3. \"Kısıtlanmış ayarlara izin ver\" seçeneğine dokunup ekran kilidinizi doğrulayın.</string>
+    <string name="perm_restricted_action">Uygulama Bilgisi\'ni Aç</string>
 
     <!-- Lock Screen -->
     <string name="lock_title_enter_pin">PIN Kodunu Girin</string>
@@ -82,4 +91,32 @@
     <string name="theme_system_desc">Cihazın açık/koyu mod ayarını otomatik takip eder</string>
     <string name="theme_light">Açık Tema</string>
     <string name="theme_dark">Koyu Tema</string>
+    <string name="theme_amoled">AMOLED Siyah</string>
+    <string name="theme_amoled_desc">OLED ve AMOLED ekranlar için saf siyah arka plan ve pil tasarrufu</string>
+
+    <!-- Pattern Lock & Recovery -->
+    <string name="pattern_title_draw">Kilit Desenini Çizin</string>
+    <string name="pattern_title_confirm">Deseni Doğrulayın</string>
+    <string name="pattern_subtitle_draw">En az 4 noktayı birleştirerek bir desen oluşturun</string>
+    <string name="pattern_subtitle_confirm">Oluşturduğunuz deseni onaylamak için tekrar çizin</string>
+    <string name="pattern_min_dots">En az 4 nokta birleştirmelisiniz</string>
+    <string name="pattern_mismatch">Desenler eşleşmedi, lütfen baştan deneyin</string>
+
+    <string name="tab_pin">PIN Kodu</string>
+    <string name="tab_pattern">Desen</string>
+
+    <string name="forgot_password">Şifremi Unuttum</string>
+    <string name="reset_credentials_title">Şifre / Desen Sıfırlama</string>
+    <string name="reset_credentials_desc">Hesabınızı doğrulamak için güvenlik sorunuzu yanıtlayın veya biyometrik doğrulama kullanın.</string>
+    <string name="security_question_label">Güvenlik Sorusu</string>
+    <string name="security_question_answer_hint">Cevabınızı girin</string>
+    <string name="security_question_wrong">Cevap hatalı, lütfen tekrar deneyin</string>
+    <string name="security_question_not_set">Henüz bir kurtarma sorusu belirlenmemiş</string>
+    <string name="settings_security_question">Kurtarma Güvenlik Sorusu</string>
+    <string name="settings_security_question_desc">Şifrenizi unutursanız sıfırlayabilmeniz için kullanılır</string>
+    <string name="security_question_saved">Güvenlik sorusu başarıyla kaydedildi</string>
+    <string name="btn_save">Kaydet</string>
+    <string name="btn_cancel">İptal</string>
+    <string name="btn_verify">Doğrula</string>
+    <string name="btn_reset">Sıfırla</string>
 </resources>

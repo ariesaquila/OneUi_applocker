@@ -18,8 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -36,6 +34,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.oneui.applocker.R
@@ -44,6 +43,7 @@ import com.oneui.applocker.core.designsystem.OneUiHeader
 import com.oneui.applocker.core.permission.PermissionType
 import com.oneui.applocker.core.theme.OneUiBlue
 import com.oneui.applocker.core.theme.OneUiGreen
+import com.oneui.applocker.core.theme.OneUiOrange
 import com.oneui.applocker.core.theme.OneUiShapes
 
 @Composable
@@ -94,6 +94,14 @@ fun PermissionsScreen(
                     onRequest = { viewModel.requestPermission(item.type) }
                 )
             }
+
+            if (!uiState.isAccessibilityGranted) {
+                item(key = "restricted_settings_guide") {
+                    RestrictedSettingsCard(
+                        onOpenAppInfo = { viewModel.openAppDetailsSettings() }
+                    )
+                }
+            }
         }
 
         // Bottom Continue button (visible when mandatory permissions are met)
@@ -140,6 +148,7 @@ private fun PermissionCard(
                     Text(
                         text = stringResource(state.type.titleRes),
                         style = MaterialTheme.typography.titleMedium,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     if (state.type.isRequired) {
@@ -153,6 +162,7 @@ private fun PermissionCard(
                             Text(
                                 text = "Zorunlu",
                                 style = MaterialTheme.typography.labelSmall,
+                                fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
                                 color = OneUiBlue
                             )
                         }
@@ -179,7 +189,7 @@ private fun PermissionCard(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Rounded.Check,
+                        painter = painterResource(id = R.drawable.ic_check),
                         contentDescription = stringResource(R.string.perm_granted),
                         tint = OneUiGreen,
                         modifier = Modifier.size(20.dp)
@@ -200,6 +210,83 @@ private fun PermissionCard(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun RestrictedSettingsCard(
+    onOpenAppInfo: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    OneUiCard(
+        modifier = modifier,
+        backgroundColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(RoundedCornerShape(18.dp))
+                    .background(OneUiOrange.copy(alpha = 0.15f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_info),
+                    contentDescription = null,
+                    tint = OneUiOrange,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Text(
+                text = stringResource(R.string.perm_restricted_title),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = stringResource(R.string.perm_restricted_desc),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            lineHeight = 18.sp
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Button(
+            onClick = onOpenAppInfo,
+            modifier = Modifier.fillMaxWidth(),
+            shape = OneUiShapes.small,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = OneUiOrange.copy(alpha = 0.15f),
+                contentColor = OneUiOrange
+            ),
+            elevation = ButtonDefaults.buttonElevation(
+                defaultElevation = 0.dp,
+                pressedElevation = 0.dp
+            )
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_settings),
+                contentDescription = null,
+                tint = OneUiOrange,
+                modifier = Modifier.size(18.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = stringResource(R.string.perm_restricted_action),
+                style = MaterialTheme.typography.labelLarge,
+                color = OneUiOrange
+            )
         }
     }
 }

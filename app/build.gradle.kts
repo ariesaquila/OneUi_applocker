@@ -20,11 +20,15 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        // Keep only Turkish and English resources to eliminate 80+ unused locale strings from dependencies
+        resourceConfigurations.addAll(listOf("tr", "en"))
     }
 
     buildTypes {
         release {
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -47,6 +51,17 @@ android {
     buildFeatures {
         compose = true
     }
+
+    packaging {
+        resources {
+            excludes += listOf(
+                "/META-INF/{AL2.0,LGPL2.1}",
+                "/META-INF/*.version",
+                "/META-INF/INDEX.LIST",
+                "/META-INF/DEPENDENCIES"
+            )
+        }
+    }
 }
 
 dependencies {
@@ -61,7 +76,6 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
 
     // Room Database

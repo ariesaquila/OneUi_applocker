@@ -16,6 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.oneui.applocker.core.theme.OneUiBgAmoled
 import com.oneui.applocker.core.theme.OneUiShapes
 
 /**
@@ -31,6 +32,9 @@ fun OneUiCard(
     onClick: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit
 ) {
+    val isAmoled = MaterialTheme.colorScheme.background == OneUiBgAmoled
+    val effectiveBorder = border ?: if (isAmoled) BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.6f)) else null
+
     Surface(
         modifier = modifier
             .fillMaxWidth()
@@ -42,7 +46,7 @@ fun OneUiCard(
         color = backgroundColor,
         tonalElevation = elevation,
         shadowElevation = elevation,
-        border = border
+        border = effectiveBorder
     ) {
         Column(
             modifier = Modifier

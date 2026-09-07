@@ -16,6 +16,10 @@ import com.oneui.applocker.ui.settings.SettingsScreen
 import com.oneui.applocker.ui.settings.SettingsViewModel
 import com.oneui.applocker.ui.setup.SetupMasterKeyScreen
 
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import com.oneui.applocker.data.model.LockType
+
 @Composable
 fun AppNavHost(
     securityManager: SecurityManager,
@@ -28,12 +32,32 @@ fun AppNavHost(
         startDestination = startDestination,
         modifier = modifier
     ) {
-        composable(Screen.SetupCredentials.route) {
+        composable(
+            route = Screen.SetupCredentials.route,
+            arguments = listOf(
+                navArgument("type") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = "PIN"
+                }
+            )
+        ) { backStackEntry ->
+            val typeArg = backStackEntry.arguments?.getString("type")
+            val initialType = if (typeArg == "PATTERN") LockType.PATTERN else LockType.PIN
             SetupMasterKeyScreen(
                 securityManager = securityManager,
+                initialLockType = initialType,
+                isChangeMode = securityManager.isConfigured(),
+                onBack = if (navController.previousBackStackEntry != null) {
+                    { navController.popBackStack() }
+                } else null,
                 onSetupComplete = {
-                    navController.navigate(Screen.Permissions.route) {
-                        popUpTo(Screen.SetupCredentials.route) { inclusive = true }
+                    if (navController.previousBackStackEntry != null) {
+                        navController.popBackStack()
+                    } else {
+                        navController.navigate(Screen.Permissions.route) {
+                            popUpTo(Screen.SetupCredentials.route) { inclusive = true }
+                        }
                     }
                 }
             )
@@ -71,6 +95,10 @@ fun AppNavHost(
                 onBack = { navController.popBackStack() },
                 onNavigateToPermissions = {
                     navController.navigate(Screen.Permissions.route)
+                },
+                onNavigateToSetupCredentials = { lockType ->
+                    val typeArg = if (lockType == LockType.PATTERN) "PATTERN" else "PIN"
+                    navController.navigate(Screen.SetupCredentials.createRoute(typeArg))
                 }
             )
         }

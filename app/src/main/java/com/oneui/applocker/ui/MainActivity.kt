@@ -17,6 +17,7 @@ import com.oneui.applocker.core.permission.PermissionHelper
 import com.oneui.applocker.core.theme.OneUiAppLockerTheme
 import com.oneui.applocker.data.model.LockSettings
 import com.oneui.applocker.data.model.ThemeMode
+import com.oneui.applocker.core.util.DisplayRefreshRateHelper
 import com.oneui.applocker.service.AppMonitorForegroundService
 import com.oneui.applocker.ui.navigation.AppNavHost
 import com.oneui.applocker.ui.navigation.Screen
@@ -26,6 +27,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        // Sync display refresh rate to device hardware (90Hz / 120Hz / 144Hz)
+        DisplayRefreshRateHelper.syncWithDeviceRefreshRate(this)
 
         // Hide app contents from Recent Apps / Task Switcher preview and prevent screenshots
         window.setFlags(
@@ -52,14 +56,8 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val settings by settingsRepository.settingsFlow.collectAsState(initial = LockSettings())
-            val isSystemDark = isSystemInDarkTheme()
-            val isDark = when (settings.themeMode) {
-                ThemeMode.SYSTEM -> isSystemDark
-                ThemeMode.LIGHT -> false
-                ThemeMode.DARK -> true
-            }
 
-            OneUiAppLockerTheme(darkTheme = isDark) {
+            OneUiAppLockerTheme(themeMode = settings.themeMode) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background

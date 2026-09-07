@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import com.oneui.applocker.core.security.AppLockStateHolder
 import com.oneui.applocker.core.security.BiometricHelper
 import com.oneui.applocker.core.theme.OneUiAppLockerTheme
+import com.oneui.applocker.core.util.DisplayRefreshRateHelper
 import com.oneui.applocker.data.model.ThemeMode
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -29,6 +30,9 @@ class LockActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         overridePendingTransition(0, 0)
+
+        // Sync display refresh rate to device hardware (90Hz / 120Hz / 144Hz) for zero-latency unlocking
+        DisplayRefreshRateHelper.syncWithDeviceRefreshRate(this)
 
         // Protect screen content from task switchers & screenshots
         window.setFlags(
@@ -80,14 +84,8 @@ class LockActivity : FragmentActivity() {
 
         setContent {
             val uiState by viewModel.uiState.collectAsState()
-            val isSystemDark = isSystemInDarkTheme()
-            val isDark = when (uiState.themeMode) {
-                ThemeMode.SYSTEM -> isSystemDark
-                ThemeMode.LIGHT -> false
-                ThemeMode.DARK -> true
-            }
 
-            OneUiAppLockerTheme(darkTheme = isDark) {
+            OneUiAppLockerTheme(themeMode = uiState.themeMode) {
                 LockScreen(viewModel = viewModel)
             }
         }

@@ -169,4 +169,23 @@ object PermissionHelper {
         return hasOverlayPermission(context) &&
                 (hasUsageAccessPermission(context) || isAccessibilityServiceEnabled(context))
     }
+
+    /**
+     * Opens Application Details Settings (App Info) page.
+     * Essential on Android 13+ to allow restricted settings (Accessibility Service) for sideloaded apps.
+     */
+    fun openAppDetailsSettings(context: Context) {
+        try {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.parse("package:${context.packageName}")
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            context.startActivity(intent)
+        } catch (e: Exception) {
+            val fallback = Intent(Settings.ACTION_SETTINGS).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            context.startActivity(fallback)
+        }
+    }
 }

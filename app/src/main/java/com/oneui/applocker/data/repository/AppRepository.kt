@@ -35,11 +35,12 @@ class AppRepository(
         }
         .combine(getRawInstalledAppsFlow()) { lockedPackageSet, rawApps ->
             val lockedSet = lockedPackageSet.toSet()
+            val collator = java.text.Collator.getInstance()
             rawApps.map { app ->
                 app.copy(isLocked = lockedSet.contains(app.packageName))
             }.sortedWith(
                 compareByDescending<AppItem> { it.isLocked }
-                    .thenBy { it.appName.lowercase() }
+                    .thenComparator { a, b -> collator.compare(a.appName, b.appName) }
             )
         }
         .flowOn(Dispatchers.IO)
@@ -55,10 +56,11 @@ class AppRepository(
         val raw = loadInstalledApplications()
         val lockedSet = lockedAppDao.getAllLockedPackageNamesSync().toSet()
         AppLockStateHolder.updateLockedPackages(lockedSet)
+        val collator = java.text.Collator.getInstance()
         raw.map { it.copy(isLocked = lockedSet.contains(it.packageName)) }
             .sortedWith(
                 compareByDescending<AppItem> { it.isLocked }
-                    .thenBy { it.appName.lowercase() }
+                    .thenComparator { a, b -> collator.compare(a.appName, b.appName) }
             )
     }
 
@@ -66,7 +68,16 @@ class AppRepository(
         val launcherIntent = Intent(Intent.ACTION_MAIN, null).apply {
             addCategory(Intent.CATEGORY_LAUNCHER)
         }
-        val resolveInfos = packageManager.queryIntentActivities(launcherIntent, 0)
+        val infoIntent = Intent(Intent.ACTION_MAIN, null).apply {
+            addCategory(Intent.CATEGORY_INFO)
+        }
+        val flags = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            PackageManager.MATCH_ALL
+        } else {
+            0
+        }
+        val resolveInfos = (packageManager.queryIntentActivities(launcherIntent, flags) +
+                packageManager.queryIntentActivities(infoIntent, flags))
         val ownPkg = context.packageName
 
         return resolveInfos.mapNotNull { resolveInfo ->
@@ -76,26 +87,34 @@ class AppRepository(
             // Exclude our own application from the list of lockable targets
             if (pkg == ownPkg) return@mapNotNull null
 
-            val appInfo = try {
+            val appInfo = activityInfo.applicationInfo ?: try {
                 packageManager.getApplicationInfo(pkg, 0)
             } catch (e: Exception) {
-                return@mapNotNull null
+                null
             }
 
-            val appName = resolveInfo.loadLabel(packageManager).toString()
-            val icon = iconCache.getOrPut("${pkg}/${activityInfo.name}") {
-                resolveInfo.loadIcon(packageManager)
+            val appName = (appInfo?.loadLabel(packageManager) ?: resolveInfo.loadLabel(packageManager)).toString().trim()
+            val safeAppName = if (appName.isNotBlank()) appName else pkg
+            val icon = iconCache.getOrPut(pkg) {
+                try {
+                    resolveInfo.loadIcon(packageManager)
+                } catch (e: Exception) {
+                    null
+                }
             }
-            val isSystem = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
+            val isSystem = appInfo?.let {
+                (it.flags and ApplicationInfo.FLAG_SYSTEM) != 0 ||
+                (it.flags and ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) != 0
+            } ?: false
 
             AppItem(
                 packageName = pkg,
-                appName = appName,
+                appName = safeAppName,
                 icon = icon,
                 isLocked = false,
                 isSystemApp = isSystem
             )
-        }.distinctBy { "${it.packageName}/${it.appName}" }
+        }.distinctBy { it.packageName }
     }
 
     suspend fun setAppLockStatus(app: AppItem, lock: Boolean) = withContext(Dispatchers.IO) {

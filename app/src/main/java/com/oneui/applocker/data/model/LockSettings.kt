@@ -1,5 +1,6 @@
 package com.oneui.applocker.data.model
 
+import androidx.compose.runtime.Immutable
 import com.oneui.applocker.core.security.RelockPolicy
 
 enum class LockType {
@@ -10,9 +11,11 @@ enum class LockType {
 enum class ThemeMode {
     SYSTEM,
     LIGHT,
-    DARK
+    DARK,
+    AMOLED
 }
 
+@Immutable
 data class LockSettings(
     val lockType: LockType = LockType.PIN,
     val isBiometricEnabled: Boolean = true,

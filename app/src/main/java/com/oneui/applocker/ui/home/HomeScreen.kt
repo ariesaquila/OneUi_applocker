@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -28,8 +29,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -63,6 +66,12 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
     val selectedFilter by viewModel.selectedFilter.collectAsState()
+    val listState = rememberLazyListState()
+
+    // Scroll to the top whenever the selected category tab or search query changes
+    LaunchedEffect(selectedFilter, searchQuery) {
+        listState.scrollToItem(0)
+    }
 
     Column(
         modifier = modifier
@@ -108,14 +117,17 @@ fun HomeScreen(
                         Text(
                             text = "Gerekli izinler eksik",
                             style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurface
                         )
+                        Spacer(modifier = Modifier.height(2.dp))
                         Text(
                             text = "Kilitlemenin çalışması için izinleri etkinleştirin.",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "İncele",
                         style = MaterialTheme.typography.labelLarge,
@@ -132,12 +144,12 @@ fun HomeScreen(
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
         )
 
-        // Filters (Hepsi, Kilitli, Kilitsiz, Sistem)
+        // Filters (Hepsi, İndirilenler, Sistem, Kilitli)
         val filterOptions = listOf(
             Triple(stringResource(R.string.filter_all), selectedFilter == 0, uiState.totalCount),
-            Triple(stringResource(R.string.filter_locked), selectedFilter == 1, uiState.lockedCount),
-            Triple(stringResource(R.string.filter_unlocked), selectedFilter == 2, uiState.unlockedCount),
-            Triple(stringResource(R.string.filter_system), selectedFilter == 3, uiState.systemCount)
+            Triple(stringResource(R.string.filter_downloaded), selectedFilter == 1, uiState.downloadedCount),
+            Triple(stringResource(R.string.filter_system), selectedFilter == 2, uiState.systemCount),
+            Triple(stringResource(R.string.filter_locked), selectedFilter == 3, uiState.lockedCount)
         )
 
         OneUiFilterRow(
@@ -146,26 +158,35 @@ fun HomeScreen(
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp)
         )
 
-        // Quick bulk actions (Lock all / Unlock all)
+        // Quick bulk actions (Lock all / Unlock all) + App count indicator
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 24.dp),
-            horizontalArrangement = Arrangement.End
+                .padding(horizontal = 24.dp, vertical = 2.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            TextButton(onClick = viewModel::lockAll) {
-                Text(
-                    text = stringResource(R.string.lock_all),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = OneUiBlue
-                )
-            }
-            TextButton(onClick = viewModel::unlockAll) {
-                Text(
-                    text = stringResource(R.string.unlock_all),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = OneUiRed
-                )
+            Text(
+                text = stringResource(R.string.apps_count_suffix, uiState.apps.size),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            Row {
+                TextButton(onClick = viewModel::lockAll) {
+                    Text(
+                        text = stringResource(R.string.lock_all),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = OneUiBlue
+                    )
+                }
+                TextButton(onClick = viewModel::unlockAll) {
+                    Text(
+                        text = stringResource(R.string.unlock_all),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = OneUiRed
+                    )
+                }
             }
         }
 
@@ -190,6 +211,7 @@ fun HomeScreen(
             }
         } else {
             LazyColumn(
+                state = listState,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 20.dp),
@@ -230,7 +252,7 @@ private fun AppListItem(
                 contentAlignment = Alignment.Center
             ) {
                 if (app.icon != null) {
-                    val bitmap = rememberAppBitmap(app.icon)
+                    val bitmap = rememberAppBitmap(app.packageName, app.icon)
                     if (bitmap != null) {
                         Image(
                             bitmap = bitmap,
@@ -312,13 +334,22 @@ private fun DefaultAppIcon() {
     }
 }
 
+private val appBitmapCache = android.util.LruCache<String, androidx.compose.ui.graphics.ImageBitmap>(200)
+
 @Composable
-private fun rememberAppBitmap(drawable: Drawable): androidx.compose.ui.graphics.ImageBitmap? {
-    return androidx.compose.runtime.remember(drawable) {
-        try {
-            drawable.toBitmap(width = 96, height = 96).asImageBitmap()
-        } catch (e: Exception) {
-            null
+private fun rememberAppBitmap(packageName: String, drawable: Drawable): androidx.compose.ui.graphics.ImageBitmap? {
+    return androidx.compose.runtime.remember(packageName) {
+        val cached = appBitmapCache.get(packageName)
+        if (cached != null) {
+            cached
+        } else {
+            try {
+                val bitmap = drawable.toBitmap(width = 96, height = 96).asImageBitmap()
+                appBitmapCache.put(packageName, bitmap)
+                bitmap
+            } catch (e: Exception) {
+                null
+            }
         }
     }
 }

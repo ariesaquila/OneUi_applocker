@@ -12,8 +12,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.oneui.applocker.data.model.ThemeMode
 
 private val DarkColorScheme = darkColorScheme(
     primary = OneUiBlue,
@@ -45,18 +47,42 @@ private val LightColorScheme = lightColorScheme(
     error = OneUiRed
 )
 
+private val AmoledColorScheme = darkColorScheme(
+    primary = OneUiBlue,
+    onPrimary = Color.White,
+    primaryContainer = OneUiBlueDark,
+    onPrimaryContainer = Color.White,
+    background = OneUiBgAmoled,
+    onBackground = OneUiTextPrimaryAmoled,
+    surface = OneUiCardAmoled,
+    onSurface = OneUiTextPrimaryAmoled,
+    surfaceVariant = OneUiCardAmoled,
+    onSurfaceVariant = OneUiTextSecondaryAmoled,
+    outline = OneUiDividerAmoled,
+    error = OneUiRed
+)
+
 @Composable
 fun OneUiAppLockerTheme(
+    themeMode: ThemeMode = ThemeMode.SYSTEM,
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = false, // Default false to preserve distinctive One UI blue aesthetic
     content: @Composable () -> Unit
 ) {
+    val isDark = when (themeMode) {
+        ThemeMode.SYSTEM -> darkTheme
+        ThemeMode.LIGHT -> false
+        ThemeMode.DARK -> true
+        ThemeMode.AMOLED -> true
+    }
+
     val colorScheme = when {
+        themeMode == ThemeMode.AMOLED -> AmoledColorScheme
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+            if (isDark) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-        darkTheme -> DarkColorScheme
+        isDark -> DarkColorScheme
         else -> LightColorScheme
     }
 
@@ -68,8 +94,8 @@ fun OneUiAppLockerTheme(
                 window.statusBarColor = colorScheme.background.toArgb()
                 window.navigationBarColor = colorScheme.background.toArgb()
                 val insetsController = WindowCompat.getInsetsController(window, view)
-                insetsController.isAppearanceLightStatusBars = !darkTheme
-                insetsController.isAppearanceLightNavigationBars = !darkTheme
+                insetsController.isAppearanceLightStatusBars = !isDark
+                insetsController.isAppearanceLightNavigationBars = !isDark
             }
         }
     }

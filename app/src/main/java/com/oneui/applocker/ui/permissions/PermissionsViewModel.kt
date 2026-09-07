@@ -8,14 +8,19 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
+import androidx.compose.runtime.Immutable
+
+@Immutable
 data class PermissionItemState(
     val type: PermissionType,
     val isGranted: Boolean
 )
 
+@Immutable
 data class PermissionsUiState(
     val permissions: List<PermissionItemState> = emptyList(),
-    val canProceed: Boolean = false
+    val canProceed: Boolean = false,
+    val isAccessibilityGranted: Boolean = false
 )
 
 class PermissionsViewModel(application: Application) : AndroidViewModel(application) {
@@ -36,14 +41,20 @@ class PermissionsViewModel(application: Application) : AndroidViewModel(applicat
             )
         }
         val mandatoryGranted = PermissionHelper.hasAllMandatoryPermissions(context)
+        val accessibilityGranted = PermissionHelper.isAccessibilityServiceEnabled(context)
 
         _uiState.value = PermissionsUiState(
             permissions = items,
-            canProceed = mandatoryGranted
+            canProceed = mandatoryGranted,
+            isAccessibilityGranted = accessibilityGranted
         )
     }
 
     fun requestPermission(type: PermissionType) {
         PermissionHelper.requestPermission(getApplication(), type)
+    }
+
+    fun openAppDetailsSettings() {
+        PermissionHelper.openAppDetailsSettings(getApplication())
     }
 }

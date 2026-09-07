@@ -20,3 +20,10 @@
 
 # AndroidX Biometrics
 -dontwarn androidx.biometric.**
+
+# Strip verbose/debug logs in release builds to reduce bytecode size & string allocations
+-assumenosideeffects class android.util.Log {
+    public static boolean isLoggable(java.lang.String, int);
+    public static int v(...);
+    public static int d(...);
+}

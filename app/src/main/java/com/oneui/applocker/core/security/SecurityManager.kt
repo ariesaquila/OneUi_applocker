@@ -68,6 +68,48 @@ class SecurityManager(context: Context) {
         return storedHash == computedHash
     }
 
+    fun hasPin(): Boolean = sharedPreferences.contains(KEY_PIN_HASH)
+
+    fun hasPattern(): Boolean = sharedPreferences.contains(KEY_PATTERN_HASH)
+
+    fun hasSecurityQuestion(): Boolean =
+        sharedPreferences.contains(KEY_SECURITY_QUESTION) && sharedPreferences.contains(KEY_SECURITY_ANSWER_HASH)
+
+    fun getSecurityQuestion(): String? = sharedPreferences.getString(KEY_SECURITY_QUESTION, null)
+
+    fun setSecurityQuestion(question: String, answer: String) {
+        val trimmedAnswer = answer.trim().lowercase(java.util.Locale.getDefault())
+        val salt = generateSalt()
+        val hash = hashWithSalt(trimmedAnswer, salt)
+        sharedPreferences.edit()
+            .putString(KEY_SECURITY_QUESTION, question.trim())
+            .putString(KEY_SECURITY_ANSWER_HASH, hash)
+            .putString(KEY_SECURITY_ANSWER_SALT, salt)
+            .apply()
+    }
+
+    fun verifySecurityAnswer(answer: String): Boolean {
+        val storedHash = sharedPreferences.getString(KEY_SECURITY_ANSWER_HASH, null) ?: return false
+        val storedSalt = sharedPreferences.getString(KEY_SECURITY_ANSWER_SALT, null) ?: return false
+        val trimmedAnswer = answer.trim().lowercase(java.util.Locale.getDefault())
+        val computedHash = hashWithSalt(trimmedAnswer, storedSalt)
+        return storedHash == computedHash
+    }
+
+    fun clearPin() {
+        sharedPreferences.edit()
+            .remove(KEY_PIN_HASH)
+            .remove(KEY_PIN_SALT)
+            .apply()
+    }
+
+    fun clearPattern() {
+        sharedPreferences.edit()
+            .remove(KEY_PATTERN_HASH)
+            .remove(KEY_PATTERN_SALT)
+            .apply()
+    }
+
     fun clearSecurity() {
         sharedPreferences.edit().clear().apply()
     }
@@ -93,5 +135,16 @@ class SecurityManager(context: Context) {
         private const val KEY_PIN_SALT = "key_pin_salt"
         private const val KEY_PATTERN_HASH = "key_pattern_hash"
         private const val KEY_PATTERN_SALT = "key_pattern_salt"
+        private const val KEY_SECURITY_QUESTION = "key_security_question"
+        private const val KEY_SECURITY_ANSWER_HASH = "key_security_answer_hash"
+        private const val KEY_SECURITY_ANSWER_SALT = "key_security_answer_salt"
+
+        val DEFAULT_SECURITY_QUESTIONS = listOf(
+            "İlk evcil hayvanınızın adı nedir?",
+            "Doğduğunuz şehir neresidir?",
+            "En sevdiğiniz öğretmeninizin adı nedir?",
+            "Çocukluk lakabınız nedir?",
+            "İlk arabanızın markası/modeli nedir?"
+        )
     }
 }

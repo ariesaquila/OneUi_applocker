@@ -53,4 +53,16 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             settingsRepository.setThemeMode(mode)
         }
     }
+
+    fun hasPin(): Boolean = securityManager.hasPin()
+
+    fun hasPattern(): Boolean = securityManager.hasPattern()
+
+    fun hasSecurityQuestion(): Boolean = securityManager.hasSecurityQuestion()
+
+    fun getSecurityQuestion(): String? = securityManager.getSecurityQuestion()
+
+    fun saveSecurityQuestion(question: String, answer: String) {
+        securityManager.setSecurityQuestion(question, answer)
+    }
 }

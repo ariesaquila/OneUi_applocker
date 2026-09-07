@@ -12,14 +12,17 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import androidx.compose.runtime.Immutable
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+@Immutable
 data class HomeUiState(
     val apps: List<AppItem> = emptyList(),
     val totalCount: Int = 0,
     val lockedCount: Int = 0,
     val unlockedCount: Int = 0,
+    val downloadedCount: Int = 0,
     val systemCount: Int = 0,
     val isLoading: Boolean = true,
     val hasRequiredPermissions: Boolean = false
@@ -32,7 +35,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
-    private val _selectedFilter = MutableStateFlow(0) // 0: Hepsi, 1: Kilitli, 2: Kilitsiz, 3: Sistem
+    private val _selectedFilter = MutableStateFlow(0) // 0: Hepsi, 1: İndirilenler, 2: Sistem, 3: Kilitli
     val selectedFilter: StateFlow<Int> = _selectedFilter.asStateFlow()
 
     val uiState: StateFlow<HomeUiState> = combine(
@@ -42,6 +45,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     ) { allApps, query, filter ->
         val lockedCount = allApps.count { it.isLocked }
         val unlockedCount = allApps.count { !it.isLocked }
+        val downloadedCount = allApps.count { !it.isSystemApp }
         val systemCount = allApps.count { it.isSystemApp }
 
         val filtered = allApps.filter { app ->
@@ -50,10 +54,10 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
                     app.packageName.contains(query, ignoreCase = true)
 
             val matchesFilter = when (filter) {
-                1 -> app.isLocked
-                2 -> !app.isLocked
-                3 -> app.isSystemApp
-                else -> true
+                1 -> !app.isSystemApp // İndirilenler
+                2 -> app.isSystemApp  // Sistem
+                3 -> app.isLocked     // Kilitli
+                else -> true          // Hepsi
             }
 
             matchesQuery && matchesFilter
@@ -64,6 +68,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             totalCount = allApps.size,
             lockedCount = lockedCount,
             unlockedCount = unlockedCount,
+            downloadedCount = downloadedCount,
             systemCount = systemCount,
             isLoading = false,
             hasRequiredPermissions = PermissionHelper.hasAllMandatoryPermissions(getApplication())

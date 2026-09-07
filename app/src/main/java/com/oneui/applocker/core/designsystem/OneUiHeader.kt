@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
 /**
@@ -35,29 +36,34 @@ fun OneUiHeader(
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
-            .padding(horizontal = 24.dp, vertical = 16.dp)
+            .padding(horizontal = 24.dp, vertical = 12.dp)
     ) {
         // Top row for Back button and Right actions
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(contentAlignment = Alignment.CenterStart) {
-                navigationIcon?.invoke()
+        if (navigationIcon != null || actions != null) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(contentAlignment = Alignment.CenterStart) {
+                    navigationIcon?.invoke()
+                }
+                Box(contentAlignment = Alignment.CenterEnd) {
+                    actions?.invoke()
+                }
             }
-            Box(contentAlignment = Alignment.CenterEnd) {
-                actions?.invoke()
-            }
+            Spacer(modifier = Modifier.height(10.dp))
+        } else {
+            Spacer(modifier = Modifier.height(8.dp))
         }
-
-        Spacer(modifier = Modifier.height(18.dp))
 
         // Large One UI Title
         Text(
             text = title,
             style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.colorScheme.onBackground,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
         )
 
         // Subtitle (e.g. "12 uygulama koruma altında")

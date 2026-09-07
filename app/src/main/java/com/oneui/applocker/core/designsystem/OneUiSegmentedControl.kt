@@ -45,13 +45,14 @@ fun OneUiFilterChip(
             .clip(RoundedCornerShape(20.dp))
             .background(backgroundColor)
             .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(horizontal = 14.dp, vertical = 7.dp),
         contentAlignment = Alignment.Center
     ) {
         val label = if (badgeCount != null && badgeCount > 0) "$text ($badgeCount)" else text
         Text(
             text = label,
-            style = MaterialTheme.typography.labelLarge,
+            style = MaterialTheme.typography.labelMedium,
+            fontWeight = if (selected) androidx.compose.ui.text.font.FontWeight.SemiBold else androidx.compose.ui.text.font.FontWeight.Normal,
             color = textColor
         )
     }

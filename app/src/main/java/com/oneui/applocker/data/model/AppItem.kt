@@ -1,7 +1,9 @@
 package com.oneui.applocker.data.model
 
 import android.graphics.drawable.Drawable
+import androidx.compose.runtime.Immutable
 
+@Immutable
 data class AppItem(
     val packageName: String,
     val appName: String,

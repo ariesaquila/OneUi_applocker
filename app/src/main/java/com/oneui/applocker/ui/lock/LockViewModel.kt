@@ -2,6 +2,8 @@ package com.oneui.applocker.ui.lock
 
 import android.app.Application
 import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import androidx.lifecycle.AndroidViewModel
@@ -12,6 +14,7 @@ import com.oneui.applocker.core.security.SecurityManager
 import com.oneui.applocker.data.model.LockSettings
 import com.oneui.applocker.data.model.LockType
 import com.oneui.applocker.data.model.ThemeMode
+import com.oneui.applocker.ui.MainActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,6 +30,7 @@ sealed class LockUiEvent {
     data class TriggerBiometric(val title: String) : LockUiEvent()
 }
 
+@androidx.compose.runtime.Immutable
 data class LockUiState(
     val targetPackage: String = "",
     val appName: String = "",
@@ -190,6 +194,31 @@ class LockViewModel(
     fun requestBiometricPrompt() {
         viewModelScope.launch {
             _eventFlow.emit(LockUiEvent.TriggerBiometric(_uiState.value.appName))
+        }
+    }
+
+    fun hasSecurityQuestion(): Boolean = securityManager.hasSecurityQuestion()
+
+    fun getSecurityQuestion(): String? = securityManager.getSecurityQuestion()
+
+    fun verifySecurityAnswer(answer: String): Boolean {
+        return securityManager.verifySecurityAnswer(answer)
+    }
+
+    fun onRecoveryUnlock() {
+        onUnlockSuccess()
+    }
+
+    fun resetCredentialsAndOpenSetup(context: Context) {
+        securityManager.clearPin()
+        securityManager.clearPattern()
+        AppLockStateHolder.markUnlocked(targetPackageName)
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+        context.startActivity(intent)
+        viewModelScope.launch {
+            _eventFlow.emit(LockUiEvent.UnlockSuccess)
         }
     }
 }

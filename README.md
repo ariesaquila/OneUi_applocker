@@ -1,7 +1,7 @@
 # 🛡️ One UI App Locker for Android
 
 <p align="center">
-  <img src="app/src/main/res/drawable/app_logo.jpg" width="128" height="128" alt="One UI App Locker Logo" style="border-radius: 28px;" />
+  <img src="docs/app_logo.jpg" width="128" height="128" alt="One UI App Locker Logo" style="border-radius: 28px;" />
 </p>
 
 <p align="center">

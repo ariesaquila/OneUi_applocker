@@ -159,14 +159,18 @@ object AppLockStateHolder {
         }
     }
 
+    private val transientPackages = setOf(
+        "com.samsung.android.biometrics",
+        "com.google.android.permissioncontroller",
+        "com.android.permissioncontroller"
+    )
+
     private fun isTransientInputOrBiometric(pkg: String): Boolean {
-        return pkg.startsWith("com.google.android.inputmethod") ||
+        return transientPackages.contains(pkg) ||
+                pkg.startsWith("com.google.android.inputmethod") ||
                 pkg.startsWith("com.samsung.android.honeyboard") ||
                 pkg.startsWith("com.touchtype.swiftkey") ||
-                pkg.contains("inputmethod") ||
-                pkg == "com.samsung.android.biometrics" ||
-                pkg == "com.google.android.permissioncontroller" ||
-                pkg == "com.android.permissioncontroller"
+                pkg.contains("inputmethod")
     }
 
     fun markLocked(packageName: String) {

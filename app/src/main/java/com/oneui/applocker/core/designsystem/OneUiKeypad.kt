@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
@@ -24,13 +23,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.oneui.applocker.R
+import com.oneui.applocker.core.theme.OneUiBgAmoled
 import com.oneui.applocker.core.theme.OneUiBlue
+import com.oneui.applocker.core.theme.OneUiKeypadButtonAmoled
 import com.oneui.applocker.core.theme.OneUiKeypadButtonDark
 import com.oneui.applocker.core.theme.OneUiKeypadButtonLight
 import com.oneui.applocker.core.theme.OneUiRed
@@ -89,7 +90,12 @@ private fun KeypadButton(
 ) {
     val view = LocalView.current
     val isDark = isSystemInDarkTheme()
-    val buttonColor = if (isDark) OneUiKeypadButtonDark else OneUiKeypadButtonLight
+    val isAmoled = MaterialTheme.colorScheme.background == OneUiBgAmoled
+    val buttonColor = when {
+        isAmoled -> OneUiKeypadButtonAmoled
+        isDark -> OneUiKeypadButtonDark
+        else -> OneUiKeypadButtonLight
+    }
 
     Box(
         modifier = modifier
@@ -105,19 +111,33 @@ private fun KeypadButton(
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = text,
-                style = MaterialTheme.typography.headlineMedium.copy(fontSize = 28.sp),
+                style = MaterialTheme.typography.headlineLarge.copy(
+                    fontSize = 26.sp,
+                    lineHeight = 28.sp,
+                    fontWeight = FontWeight.Medium
+                ),
                 color = MaterialTheme.colorScheme.onSurface
             )
             if (subText != null) {
                 Text(
                     text = subText,
-                    style = MaterialTheme.typography.labelMedium.copy(fontSize = 9.sp),
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontSize = 10.sp,
+                        letterSpacing = 1.2.sp,
+                        fontWeight = FontWeight.Normal
+                    ),
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
     }
 }
+
+private val KEYPAD_ROWS = listOf(
+    listOf("1" to "", "2" to "ABC", "3" to "DEF"),
+    listOf("4" to "GHI", "5" to "JKL", "6" to "MNO"),
+    listOf("7" to "PQRS", "8" to "TUV", "9" to "WXYZ")
+)
 
 /**
  * Samsung One UI PIN Keypad (1 to 9, Biometrics, 0, Backspace).
@@ -132,18 +152,12 @@ fun OneUiPinKeypad(
 ) {
     val view = LocalView.current
 
-    val keypadRows = listOf(
-        listOf("1" to "", "2" to "ABC", "3" to "DEF"),
-        listOf("4" to "GHI", "5" to "JKL", "6" to "MNO"),
-        listOf("7" to "PQRS", "8" to "TUV", "9" to "WXYZ")
-    )
-
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        keypadRows.forEach { row ->
+        KEYPAD_ROWS.forEach { row ->
             Row(
                 horizontalArrangement = Arrangement.spacedBy(30.dp)
             ) {
