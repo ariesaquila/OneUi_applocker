@@ -70,29 +70,19 @@ class AppMonitorForegroundService : Service() {
         monitorJob?.cancel()
         monitorJob = serviceScope.launch {
             val usageStatsManager = getSystemService(Context.USAGE_STATS_SERVICE) as? UsageStatsManager
-            var lastEventTimestamp = System.currentTimeMillis()
+            var lastHandledPackage: String? = null
 
             while (isActive) {
                 if (usageStatsManager != null && PermissionHelper.hasUsageAccessPermission(this@AppMonitorForegroundService)) {
-                    val currentTime = System.currentTimeMillis()
-                    val usageEvents = usageStatsManager.queryEvents(currentTime - 3000L, currentTime)
-                    val event = UsageEvents.Event()
-                    var foregroundPackage: String? = null
-                    var latestTimestamp = lastEventTimestamp
+                    val foregroundPackage = getForegroundPackageName(usageStatsManager)
 
-                    while (usageEvents.hasNextEvent()) {
-                        usageEvents.getNextEvent(event)
-                        if (event.eventType == UsageEvents.Event.ACTIVITY_RESUMED && event.timeStamp > latestTimestamp) {
-                            latestTimestamp = event.timeStamp
-                            foregroundPackage = event.packageName
-                        }
-                    }
-
-                    if (foregroundPackage != null) {
-                        lastEventTimestamp = latestTimestamp
+                    if (!foregroundPackage.isNullOrBlank()) {
                         val isLockActivity = (foregroundPackage == packageName && AppLockStateHolder.isLockActivityInForeground)
                         if (!isLockActivity) {
-                            AppLockStateHolder.onForegroundPackageChanged(foregroundPackage)
+                            if (foregroundPackage != lastHandledPackage) {
+                                AppLockStateHolder.onForegroundPackageChanged(foregroundPackage)
+                                lastHandledPackage = foregroundPackage
+                            }
 
                             if (AppLockStateHolder.shouldIntercept(foregroundPackage)) {
                                 launchLockScreen(foregroundPackage)
@@ -104,6 +94,46 @@ class AppMonitorForegroundService : Service() {
                 delay(120L)
             }
         }
+    }
+
+    private fun getForegroundPackageName(usageStatsManager: UsageStatsManager): String? {
+        val currentTime = System.currentTimeMillis()
+        try {
+            // 1. Primary: Query UsageEvents over the last 15 seconds
+            val usageEvents = usageStatsManager.queryEvents(currentTime - 15_000L, currentTime)
+            val event = UsageEvents.Event()
+            var latestTimestamp = 0L
+            var latestPackage: String? = null
+
+            while (usageEvents.hasNextEvent()) {
+                usageEvents.getNextEvent(event)
+                // Event type 1 is MOVE_TO_FOREGROUND / ACTIVITY_RESUMED
+                if ((event.eventType == 1 || event.eventType == UsageEvents.Event.ACTIVITY_RESUMED) && event.timeStamp >= latestTimestamp) {
+                    latestTimestamp = event.timeStamp
+                    latestPackage = event.packageName
+                }
+            }
+
+            if (!latestPackage.isNullOrBlank()) {
+                return latestPackage
+            }
+
+            // 2. Secondary fallback: Query UsageStats for devices where events are batched/delayed
+            val stats = usageStatsManager.queryUsageStats(
+                UsageStatsManager.INTERVAL_DAILY,
+                currentTime - 60_000L,
+                currentTime
+            )
+            if (!stats.isNullOrEmpty()) {
+                val mostRecent = stats.maxByOrNull { it.lastTimeUsed }
+                if (mostRecent != null && (currentTime - mostRecent.lastTimeUsed) < 15_000L) {
+                    return mostRecent.packageName
+                }
+            }
+        } catch (e: Exception) {
+            // UsageStats query failure fallback
+        }
+        return null
     }
 
     private fun launchLockScreen(packageName: String) {
@@ -127,7 +157,8 @@ class AppMonitorForegroundService : Service() {
                 options.toBundle()
             )
             try {
-                pendingIntent.send()
+                // Pass options.toBundle() to send() so the background activity launch allowance is applied
+                pendingIntent.send(this, 0, null, null, null, null, options.toBundle())
             } catch (e: Exception) {
                 try {
                     startActivity(intent, options.toBundle())

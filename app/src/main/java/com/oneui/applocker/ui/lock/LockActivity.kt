@@ -23,6 +23,11 @@ import kotlinx.coroutines.launch
 
 class LockActivity : FragmentActivity() {
 
+    override fun attachBaseContext(newBase: Context) {
+        val lang = com.oneui.applocker.core.util.LocaleHelper.getSavedLanguage(newBase)
+        super.attachBaseContext(com.oneui.applocker.core.util.LocaleHelper.applyLocale(newBase, lang))
+    }
+
     private lateinit var viewModel: LockViewModel
     private lateinit var biometricHelper: BiometricHelper
     private var targetPackage: String = ""
@@ -150,6 +155,21 @@ class LockActivity : FragmentActivity() {
     override fun finish() {
         super.finish()
         overridePendingTransition(0, 0)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        AppLockStateHolder.isLockActivityInForeground = true
+    }
+
+    override fun onPause() {
+        super.onPause()
+        AppLockStateHolder.isLockActivityInForeground = false
+    }
+
+    override fun onStop() {
+        super.onStop()
+        AppLockStateHolder.isLockActivityInForeground = false
     }
 
     override fun onDestroy() {

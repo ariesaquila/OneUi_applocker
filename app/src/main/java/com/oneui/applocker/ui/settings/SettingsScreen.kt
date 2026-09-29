@@ -433,11 +433,14 @@ fun SettingsScreen(
                         com.oneui.applocker.core.util.LocaleHelper.LANGUAGE_EN to stringResource(R.string.language_en)
                     )
 
+                    val context = androidx.compose.ui.platform.LocalContext.current
+                    val activity = context as? android.app.Activity
+
                     languages.forEach { (code, label) ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable { viewModel.onLanguageSelected(code) }
+                                .clickable { viewModel.onLanguageSelected(context, code, activity) }
                                 .padding(vertical = 8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {

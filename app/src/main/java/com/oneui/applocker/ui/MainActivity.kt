@@ -27,6 +27,11 @@ import com.oneui.applocker.ui.navigation.Screen
 
 class MainActivity : ComponentActivity() {
 
+    override fun attachBaseContext(newBase: android.content.Context) {
+        val lang = com.oneui.applocker.core.util.LocaleHelper.getSavedLanguage(newBase)
+        super.attachBaseContext(com.oneui.applocker.core.util.LocaleHelper.applyLocale(newBase, lang))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

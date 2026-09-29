@@ -26,6 +26,11 @@ class AppLockerApp : Application() {
     lateinit var securityManager: SecurityManager
         private set
 
+    override fun attachBaseContext(base: android.content.Context) {
+        val lang = com.oneui.applocker.core.util.LocaleHelper.getSavedLanguage(base)
+        super.attachBaseContext(com.oneui.applocker.core.util.LocaleHelper.applyLocale(base, lang))
+    }
+
     override fun onCreate() {
         super.onCreate()
         instance = this
