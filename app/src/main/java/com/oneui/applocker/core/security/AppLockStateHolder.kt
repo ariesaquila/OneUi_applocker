@@ -45,6 +45,16 @@ object AppLockStateHolder {
         lockedPackages.addAll(packages)
     }
 
+    fun addLockedPackage(packageName: String) {
+        lockedPackages.add(packageName)
+        clearSessionForPackage(packageName)
+    }
+
+    fun removeLockedPackage(packageName: String) {
+        lockedPackages.remove(packageName)
+        clearSessionForPackage(packageName)
+    }
+
     fun isPackageLocked(packageName: String): Boolean {
         return lockedPackages.contains(packageName)
     }
@@ -137,9 +147,11 @@ object AppLockStateHolder {
 
         val now = System.currentTimeMillis()
 
-        // 1. Initial Transition Grace: When LockActivity closes, permit entering target app
+        // 1. Initial Transition Grace: When LockActivity closes, permit entering target app for 3s
         if (!hasEnteredTargetApp && activeUnlockedPackage == packageName) {
-            return false
+            if (now - unlockTimestamp < 3_000L) {
+                return false
+            }
         }
 
         // 2. Active Session: User is actively inside this app
@@ -185,7 +197,7 @@ object AppLockStateHolder {
     }
 
     fun markLocked(packageName: String) {
-        clearSessionForPackage(packageName)
+        addLockedPackage(packageName)
     }
 
     fun onScreenOff() {

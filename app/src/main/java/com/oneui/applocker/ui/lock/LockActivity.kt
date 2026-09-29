@@ -37,6 +37,9 @@ class LockActivity : FragmentActivity() {
         AppLockStateHolder.isLockActivityInForeground = true
         overridePendingTransition(0, 0)
 
+        val notificationManager = getSystemService(android.app.NotificationManager::class.java)
+        notificationManager?.cancel(com.oneui.applocker.service.AppMonitorForegroundService.LOCK_ALERT_NOTIFICATION_ID)
+
         // Sync display refresh rate to device hardware (90Hz / 120Hz / 144Hz) for zero-latency unlocking
         DisplayRefreshRateHelper.syncWithDeviceRefreshRate(this)
 

@@ -118,10 +118,10 @@ class AppRepository(
     suspend fun setPackageLockStatus(packageName: String, appName: String, lock: Boolean) = withContext(Dispatchers.IO) {
         if (lock) {
             lockedAppDao.insert(LockedAppEntity(packageName = packageName, appName = appName))
-            AppLockStateHolder.markLocked(packageName)
+            AppLockStateHolder.addLockedPackage(packageName)
         } else {
             lockedAppDao.deleteByPackageName(packageName)
-            AppLockStateHolder.markUnlocked(packageName)
+            AppLockStateHolder.removeLockedPackage(packageName)
         }
     }
 

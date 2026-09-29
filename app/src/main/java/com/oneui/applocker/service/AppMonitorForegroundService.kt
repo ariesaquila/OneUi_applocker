@@ -1,6 +1,7 @@
 package com.oneui.applocker.service
 
 import android.app.ActivityOptions
+import android.app.AlarmManager
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -29,8 +30,8 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 /**
- * Foreground Service used strictly as a fallback when Accessibility Service is disabled.
- * Uses IMPORTANCE_MIN so it stays completely silent, has no status bar icon, and is minimized.
+ * High-performance foreground monitoring service for application locking.
+ * Uses UsageEvents polling + Full-Screen Intent fallback for guaranteed immediate interception.
  */
 class AppMonitorForegroundService : Service() {
 
@@ -40,17 +41,42 @@ class AppMonitorForegroundService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        createNotificationChannel()
+        createNotificationChannels()
         startForegroundServiceNotification()
         registerScreenStateReceiver()
         startMonitoringLoop()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (monitorJob?.isActive != true) {
+            startMonitoringLoop()
+        }
         return START_STICKY
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
+
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        // Keep service alive if user swipes One UI AppLocker away from recent apps
+        try {
+            val restartIntent = Intent(applicationContext, AppMonitorForegroundService::class.java)
+            val restartPendingIntent = PendingIntent.getService(
+                applicationContext,
+                101,
+                restartIntent,
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_ONE_SHOT
+            )
+            val alarmManager = getSystemService(Context.ALARM_SERVICE) as? AlarmManager
+            alarmManager?.set(
+                AlarmManager.RTC_WAKEUP,
+                System.currentTimeMillis() + 1000L,
+                restartPendingIntent
+            )
+        } catch (e: Exception) {
+            // Ignore
+        }
+    }
 
     private fun registerScreenStateReceiver() {
         val filter = IntentFilter().apply {
@@ -96,11 +122,18 @@ class AppMonitorForegroundService : Service() {
         }
     }
 
+    private fun isIgnoredPackage(pkg: String?): Boolean {
+        if (pkg.isNullOrBlank()) return true
+        if (pkg == "android" || pkg == "com.android.systemui") return true
+        if (pkg.contains("inputmethod") || pkg.contains("honeyboard") || pkg.contains("swiftkey")) return true
+        return false
+    }
+
     private fun getForegroundPackageName(usageStatsManager: UsageStatsManager): String? {
         val currentTime = System.currentTimeMillis()
         try {
-            // 1. Primary: Query UsageEvents over the last 15 seconds
-            val usageEvents = usageStatsManager.queryEvents(currentTime - 15_000L, currentTime)
+            // Query events over the last 60 seconds
+            val usageEvents = usageStatsManager.queryEvents(currentTime - 60_000L, currentTime)
             val event = UsageEvents.Event()
             var latestTimestamp = 0L
             var latestPackage: String? = null
@@ -109,8 +142,11 @@ class AppMonitorForegroundService : Service() {
                 usageEvents.getNextEvent(event)
                 // Event type 1 is MOVE_TO_FOREGROUND / ACTIVITY_RESUMED
                 if ((event.eventType == 1 || event.eventType == UsageEvents.Event.ACTIVITY_RESUMED) && event.timeStamp >= latestTimestamp) {
-                    latestTimestamp = event.timeStamp
-                    latestPackage = event.packageName
+                    val pkg = event.packageName
+                    if (!isIgnoredPackage(pkg)) {
+                        latestTimestamp = event.timeStamp
+                        latestPackage = pkg
+                    }
                 }
             }
 
@@ -118,20 +154,20 @@ class AppMonitorForegroundService : Service() {
                 return latestPackage
             }
 
-            // 2. Secondary fallback: Query UsageStats for devices where events are batched/delayed
+            // Fallback for devices where events are batched:
             val stats = usageStatsManager.queryUsageStats(
                 UsageStatsManager.INTERVAL_DAILY,
                 currentTime - 60_000L,
                 currentTime
             )
             if (!stats.isNullOrEmpty()) {
-                val mostRecent = stats.maxByOrNull { it.lastTimeUsed }
-                if (mostRecent != null && (currentTime - mostRecent.lastTimeUsed) < 15_000L) {
+                val mostRecent = stats.filter { !isIgnoredPackage(it.packageName) }.maxByOrNull { it.lastTimeUsed }
+                if (mostRecent != null && (currentTime - mostRecent.lastTimeUsed) < 20_000L) {
                     return mostRecent.packageName
                 }
             }
         } catch (e: Exception) {
-            // UsageStats query failure fallback
+            // Fallback error handling
         }
         return null
     }
@@ -145,46 +181,93 @@ class AppMonitorForegroundService : Service() {
                 Intent.FLAG_ACTIVITY_NO_ANIMATION
             )
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            val options = ActivityOptions.makeBasic().apply {
+
+        val options = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            ActivityOptions.makeBasic().apply {
                 setPendingIntentBackgroundActivityStartMode(ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOWED)
             }
-            val pendingIntent = PendingIntent.getActivity(
-                this,
-                packageName.hashCode(),
-                intent,
-                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
-                options.toBundle()
-            )
-            try {
-                // Pass options.toBundle() to send() so the background activity launch allowance is applied
-                pendingIntent.send(this, 0, null, null, null, null, options.toBundle())
-            } catch (e: Exception) {
-                try {
-                    startActivity(intent, options.toBundle())
-                } catch (e2: Exception) {
-                    startActivity(intent)
-                }
-            }
         } else {
-            startActivity(intent)
+            ActivityOptions.makeBasic()
+        }
+
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            packageName.hashCode(),
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+            options.toBundle()
+        )
+
+        // Tier 1: Direct startActivity
+        try {
+            startActivity(intent, options.toBundle())
+            return
+        } catch (e: Exception) {
+            // Fallback
+        }
+
+        // Tier 2: PendingIntent.send
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                pendingIntent.send(this, 0, null, null, null, null, options.toBundle())
+            } else {
+                pendingIntent.send()
+            }
+            return
+        } catch (e: Exception) {
+            // Fallback
+        }
+
+        // Tier 3: Full-Screen Intent notification (Guaranteed foreground popup on Android 10-15)
+        try {
+            val notification = NotificationCompat.Builder(this, LOCK_ALERT_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_shield)
+                .setContentTitle(getString(R.string.app_name))
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setCategory(NotificationCompat.CATEGORY_ALARM)
+                .setFullScreenIntent(pendingIntent, true)
+                .setAutoCancel(true)
+                .build()
+
+            val notificationManager = getSystemService(NotificationManager::class.java)
+            notificationManager?.notify(LOCK_ALERT_NOTIFICATION_ID, notification)
+        } catch (e: Exception) {
+            try {
+                startActivity(intent)
+            } catch (e2: Exception) {
+                // Ignore
+            }
         }
     }
 
-    private fun createNotificationChannel() {
+    private fun createNotificationChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
+            val manager = getSystemService(NotificationManager::class.java) ?: return
+
+            // 1. Silent channel for ongoing background monitoring
+            val silentChannel = NotificationChannel(
                 CHANNEL_ID,
                 getString(R.string.foreground_service_channel_name),
-                // IMPORTANCE_MIN: No sound, no status bar icon, completely minimized
                 NotificationManager.IMPORTANCE_MIN
             ).apply {
                 description = getString(R.string.foreground_service_channel_desc)
                 setShowBadge(false)
                 lockscreenVisibility = Notification.VISIBILITY_SECRET
             }
-            val manager = getSystemService(NotificationManager::class.java)
-            manager?.createNotificationChannel(channel)
+            manager.createNotificationChannel(silentChannel)
+
+            // 2. High-priority alert channel for Full-Screen Intent lock popup
+            val alertChannel = NotificationChannel(
+                LOCK_ALERT_CHANNEL_ID,
+                "One UI App Locker Alert",
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Lock screen triggers"
+                setShowBadge(false)
+                setSound(null, null)
+                enableVibration(false)
+            }
+            manager.createNotificationChannel(alertChannel)
         }
     }
 
@@ -232,18 +315,20 @@ class AppMonitorForegroundService : Service() {
 
     companion object {
         const val CHANNEL_ID = "oneui_applocker_silent_monitor"
+        const val LOCK_ALERT_CHANNEL_ID = "oneui_applocker_lock_alert"
         const val NOTIFICATION_ID = 1001
+        const val LOCK_ALERT_NOTIFICATION_ID = 2002
 
         fun start(context: Context) {
-            // Only start if accessibility is NOT enabled
-            if (PermissionHelper.isAccessibilityServiceEnabled(context)) {
-                return
-            }
             val intent = Intent(context, AppMonitorForegroundService::class.java)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(intent)
-            } else {
-                context.startService(intent)
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    context.startForegroundService(intent)
+                } else {
+                    context.startService(intent)
+                }
+            } catch (e: Exception) {
+                // Ignore
             }
         }
 

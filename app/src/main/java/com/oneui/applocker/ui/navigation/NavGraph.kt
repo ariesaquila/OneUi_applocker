@@ -65,9 +65,11 @@ fun AppNavHost(
 
         composable(Screen.Permissions.route) {
             val permissionsViewModel: PermissionsViewModel = viewModel()
+            val context = androidx.compose.ui.platform.LocalContext.current
             PermissionsScreen(
                 viewModel = permissionsViewModel,
                 onContinue = {
+                    com.oneui.applocker.service.AppMonitorForegroundService.start(context)
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Permissions.route) { inclusive = true }
                     }
