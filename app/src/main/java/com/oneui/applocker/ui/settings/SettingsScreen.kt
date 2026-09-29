@@ -91,6 +91,36 @@ fun SettingsScreen(
             item {
                 SettingsSectionTitle(title = stringResource(R.string.settings_section_security))
                 OneUiCard {
+                    // Self-Lock App Toggle
+                    val isSelfLocked by viewModel.isAppSelfLocked.collectAsState()
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "One UI AppLocker'ı Kilitle",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = "Bu uygulama açılırken PIN / Desen veya parmak izi iste",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        OneUiSwitch(
+                            checked = isSelfLocked,
+                            onCheckedChange = viewModel::onToggleAppSelfLock
+                        )
+                    }
+
+                    HorizontalDivider(
+                        modifier = Modifier.padding(vertical = 12.dp),
+                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f)
+                    )
+
                     // Lock Type (PIN vs PATTERN)
                     Text(
                         text = stringResource(R.string.settings_lock_type),

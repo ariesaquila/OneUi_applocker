@@ -35,4 +35,10 @@ interface LockedAppDao {
 
     @Query("SELECT COUNT(*) FROM locked_apps")
     fun getLockedCount(): Flow<Int>
+
+    @Query("SELECT EXISTS(SELECT 1 FROM locked_apps WHERE packageName = :packageName)")
+    fun isPackageLocked(packageName: String): Flow<Boolean>
+
+    @Query("SELECT EXISTS(SELECT 1 FROM locked_apps WHERE packageName = :packageName)")
+    suspend fun isPackageLockedSync(packageName: String): Boolean
 }

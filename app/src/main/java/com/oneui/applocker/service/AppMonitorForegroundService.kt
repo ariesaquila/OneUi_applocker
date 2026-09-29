@@ -1,5 +1,6 @@
 package com.oneui.applocker.service
 
+import android.app.ActivityOptions
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -80,7 +81,7 @@ class AppMonitorForegroundService : Service() {
         monitorJob?.cancel()
         monitorJob = serviceScope.launch {
             val usageStatsManager = getSystemService(Context.USAGE_STATS_SERVICE) as? UsageStatsManager
-            var lastCheckedTime = System.currentTimeMillis()
+            var lastEventTimestamp = System.currentTimeMillis()
 
             while (isActive) {
                 // If Accessibility Service becomes active at runtime, shut down fallback service
@@ -91,26 +92,30 @@ class AppMonitorForegroundService : Service() {
 
                 if (usageStatsManager != null && PermissionHelper.hasUsageAccessPermission(this@AppMonitorForegroundService)) {
                     val currentTime = System.currentTimeMillis()
-                    val usageEvents = usageStatsManager.queryEvents(lastCheckedTime - 500, currentTime)
+                    val usageEvents = usageStatsManager.queryEvents(currentTime - 3000L, currentTime)
                     val event = UsageEvents.Event()
                     var foregroundPackage: String? = null
+                    var latestTimestamp = lastEventTimestamp
 
                     while (usageEvents.hasNextEvent()) {
                         usageEvents.getNextEvent(event)
-                        if (event.eventType == UsageEvents.Event.ACTIVITY_RESUMED) {
+                        if (event.eventType == UsageEvents.Event.ACTIVITY_RESUMED && event.timeStamp > latestTimestamp) {
+                            latestTimestamp = event.timeStamp
                             foregroundPackage = event.packageName
                         }
                     }
 
-                    if (foregroundPackage != null && foregroundPackage != packageName) {
-                        AppLockStateHolder.onForegroundPackageChanged(foregroundPackage)
+                    if (foregroundPackage != null) {
+                        lastEventTimestamp = latestTimestamp
+                        val isLockActivity = (foregroundPackage == packageName && AppLockStateHolder.isLockActivityInForeground)
+                        if (!isLockActivity) {
+                            AppLockStateHolder.onForegroundPackageChanged(foregroundPackage)
 
-                        if (AppLockStateHolder.shouldIntercept(foregroundPackage)) {
-                            launchLockScreen(foregroundPackage)
+                            if (AppLockStateHolder.shouldIntercept(foregroundPackage)) {
+                                launchLockScreen(foregroundPackage)
+                            }
                         }
                     }
-
-                    lastCheckedTime = currentTime
                 }
 
                 delay(180L)
@@ -127,7 +132,29 @@ class AppMonitorForegroundService : Service() {
                 Intent.FLAG_ACTIVITY_NO_ANIMATION
             )
         }
-        startActivity(intent)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            val options = ActivityOptions.makeBasic().apply {
+                setPendingIntentBackgroundActivityStartMode(ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOWED)
+            }
+            val pendingIntent = PendingIntent.getActivity(
+                this,
+                packageName.hashCode(),
+                intent,
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+                options.toBundle()
+            )
+            try {
+                pendingIntent.send()
+            } catch (e: Exception) {
+                try {
+                    startActivity(intent, options.toBundle())
+                } catch (e2: Exception) {
+                    startActivity(intent)
+                }
+            }
+        } else {
+            startActivity(intent)
+        }
     }
 
     private fun createNotificationChannel() {

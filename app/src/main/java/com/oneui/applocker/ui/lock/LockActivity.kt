@@ -29,6 +29,7 @@ class LockActivity : FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AppLockStateHolder.isLockActivityInForeground = true
         overridePendingTransition(0, 0)
 
         // Sync display refresh rate to device hardware (90Hz / 120Hz / 144Hz) for zero-latency unlocking
@@ -149,6 +150,11 @@ class LockActivity : FragmentActivity() {
     override fun finish() {
         super.finish()
         overridePendingTransition(0, 0)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        AppLockStateHolder.isLockActivityInForeground = false
     }
 
     companion object {

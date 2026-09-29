@@ -35,6 +35,9 @@ object AppLockStateHolder {
     var ownPackageName: String = "com.oneui.applocker"
 
     @Volatile
+    var isLockActivityInForeground: Boolean = false
+
+    @Volatile
     var lastForegroundPackage: String? = null
 
     fun updateLockedPackages(packages: Collection<String>) {
@@ -173,18 +176,16 @@ object AppLockStateHolder {
                 pkg.contains("inputmethod")
     }
 
-    fun markLocked(packageName: String) {
-        if (packageName == ownPackageName && lastForegroundPackage == ownPackageName) {
-            // User is currently inside the app locking it; keep current session active until exit
-            markUnlocked(packageName)
-            hasEnteredTargetApp = true
-        } else {
-            unlockedSessions.remove(packageName)
-            if (activeUnlockedPackage == packageName) {
-                activeUnlockedPackage = null
-                hasEnteredTargetApp = false
-            }
+    fun clearSessionForPackage(packageName: String) {
+        unlockedSessions.remove(packageName)
+        if (activeUnlockedPackage == packageName) {
+            activeUnlockedPackage = null
+            hasEnteredTargetApp = false
         }
+    }
+
+    fun markLocked(packageName: String) {
+        clearSessionForPackage(packageName)
     }
 
     fun onScreenOff() {

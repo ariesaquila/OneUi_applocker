@@ -113,14 +113,20 @@ class AppRepository(
         }.distinctBy { it.packageName }
     }
 
-    suspend fun setAppLockStatus(app: AppItem, lock: Boolean) = withContext(Dispatchers.IO) {
+    fun isAppLocked(packageName: String): Flow<Boolean> = lockedAppDao.isPackageLocked(packageName)
+
+    suspend fun setPackageLockStatus(packageName: String, appName: String, lock: Boolean) = withContext(Dispatchers.IO) {
         if (lock) {
-            lockedAppDao.insert(LockedAppEntity(packageName = app.packageName, appName = app.appName))
-            AppLockStateHolder.markLocked(app.packageName)
+            lockedAppDao.insert(LockedAppEntity(packageName = packageName, appName = appName))
+            AppLockStateHolder.markLocked(packageName)
         } else {
-            lockedAppDao.deleteByPackageName(app.packageName)
-            AppLockStateHolder.markUnlocked(app.packageName)
+            lockedAppDao.deleteByPackageName(packageName)
+            AppLockStateHolder.markUnlocked(packageName)
         }
+    }
+
+    suspend fun setAppLockStatus(app: AppItem, lock: Boolean) = withContext(Dispatchers.IO) {
+        setPackageLockStatus(app.packageName, app.appName, lock)
     }
 
     suspend fun lockAll(apps: List<AppItem>) = withContext(Dispatchers.IO) {

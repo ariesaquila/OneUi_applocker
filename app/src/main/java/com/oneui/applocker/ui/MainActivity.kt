@@ -77,10 +77,24 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         manageBackgroundService()
-        checkAppLock()
+        if (checkAppLock()) {
+            return
+        }
+        AppLockStateHolder.activeUnlockedPackage = packageName
+        AppLockStateHolder.hasEnteredTargetApp = true
+        AppLockStateHolder.lastForegroundPackage = packageName
     }
 
-    private fun checkAppLock() {
+    override fun onStop() {
+        super.onStop()
+        if (AppLockStateHolder.isPackageLocked(packageName)) {
+            if (AppLockStateHolder.relockPolicy == com.oneui.applocker.core.security.RelockPolicy.IMMEDIATELY) {
+                AppLockStateHolder.clearSessionForPackage(packageName)
+            }
+        }
+    }
+
+    private fun checkAppLock(): Boolean {
         val app = application as AppLockerApp
         val securityManager = app.securityManager
         if (securityManager.isConfigured() &&
@@ -91,7 +105,9 @@ class MainActivity : ComponentActivity() {
                 addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
             }
             startActivity(intent)
+            return true
         }
+        return false
     }
 
     /**

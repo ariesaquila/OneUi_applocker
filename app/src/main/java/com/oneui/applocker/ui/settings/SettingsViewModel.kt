@@ -17,12 +17,30 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     private val settingsRepository = (application as AppLockerApp).settingsRepository
     private val securityManager = (application as AppLockerApp).securityManager
+    private val appRepository = (application as AppLockerApp).appRepository
+    val ownPackageName: String = application.packageName
 
     val settingsState: StateFlow<LockSettings> = settingsRepository.settingsFlow.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = LockSettings()
     )
+
+    val isAppSelfLocked: StateFlow<Boolean> = appRepository.isAppLocked(ownPackageName).stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = false
+    )
+
+    fun onToggleAppSelfLock(locked: Boolean) {
+        viewModelScope.launch {
+            appRepository.setPackageLockStatus(
+                packageName = ownPackageName,
+                appName = getApplication<Application>().getString(com.oneui.applocker.R.string.app_name),
+                lock = locked
+            )
+        }
+    }
 
     fun onLockTypeSelected(lockType: LockType) {
         viewModelScope.launch {
