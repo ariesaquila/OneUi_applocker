@@ -17,6 +17,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" tools:node="remove" />
 
     <application
         android:name=".AppLockerApp"
@@ -53,21 +54,7 @@
             android:theme="@style/Theme.OneUiAppLocker.LockScreen"
             android:windowSoftInputMode="stateAlwaysHidden|adjustNothing" />
 
-        <!-- Ultra-low latency Accessibility Service for instant app interception -->
-        <service
-            android:name=".service.AppLockAccessibilityService"
-            android:exported="true"
-            android:label="@string/accessibility_service_name"
-            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
-            <intent-filter>
-                <action android:name="android.accessibilityservice.AccessibilityService" />
-            </intent-filter>
-            <meta-data
-                android:name="android.accessibilityservice"
-                android:resource="@xml/accessibility_service_config" />
-        </service>
-
-        <!-- Foreground Service fallback for continuous usage monitoring -->
+        <!-- Foreground Service for continuous usage monitoring and app protection -->
         <service
             android:name=".service.AppMonitorForegroundService"
             android:exported="false"

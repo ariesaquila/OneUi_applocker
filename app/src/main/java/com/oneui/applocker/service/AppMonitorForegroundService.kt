@@ -40,13 +40,6 @@ class AppMonitorForegroundService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-
-        // If Accessibility Service is already active, this fallback service is not needed
-        if (PermissionHelper.isAccessibilityServiceEnabled(this)) {
-            stopSelf()
-            return
-        }
-
         createNotificationChannel()
         startForegroundServiceNotification()
         registerScreenStateReceiver()
@@ -54,10 +47,6 @@ class AppMonitorForegroundService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (PermissionHelper.isAccessibilityServiceEnabled(this)) {
-            stopSelf()
-            return START_NOT_STICKY
-        }
         return START_STICKY
     }
 
@@ -84,12 +73,6 @@ class AppMonitorForegroundService : Service() {
             var lastEventTimestamp = System.currentTimeMillis()
 
             while (isActive) {
-                // If Accessibility Service becomes active at runtime, shut down fallback service
-                if (PermissionHelper.isAccessibilityServiceEnabled(this@AppMonitorForegroundService)) {
-                    stopSelf()
-                    break
-                }
-
                 if (usageStatsManager != null && PermissionHelper.hasUsageAccessPermission(this@AppMonitorForegroundService)) {
                     val currentTime = System.currentTimeMillis()
                     val usageEvents = usageStatsManager.queryEvents(currentTime - 3000L, currentTime)
@@ -118,7 +101,7 @@ class AppMonitorForegroundService : Service() {
                     }
                 }
 
-                delay(180L)
+                delay(120L)
             }
         }
     }

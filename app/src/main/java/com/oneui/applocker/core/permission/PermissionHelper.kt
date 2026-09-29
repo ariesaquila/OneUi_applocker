@@ -11,7 +11,6 @@ import android.os.PowerManager
 import android.os.Process
 import android.provider.Settings
 import androidx.core.content.ContextCompat
-import com.oneui.applocker.service.AppLockAccessibilityService
 
 object PermissionHelper {
 
@@ -77,18 +76,7 @@ object PermissionHelper {
         }
     }
 
-    /**
-     * Checks if our Accessibility Service is actively enabled in System Settings.
-     */
-    fun isAccessibilityServiceEnabled(context: Context): Boolean {
-        val expectedServiceName = "${context.packageName}/${AppLockAccessibilityService::class.java.canonicalName}"
-        val enabledServices = Settings.Secure.getString(
-            context.contentResolver,
-            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
-        ) ?: return false
-
-        return enabledServices.split(":").any { it.equals(expectedServiceName, ignoreCase = true) }
-    }
+    fun isAccessibilityServiceEnabled(context: Context): Boolean = false
 
     fun openAccessibilitySettings(context: Context) {
         val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
@@ -138,7 +126,6 @@ object PermissionHelper {
         return when (type) {
             PermissionType.OVERLAY -> hasOverlayPermission(context)
             PermissionType.USAGE_ACCESS -> hasUsageAccessPermission(context)
-            PermissionType.ACCESSIBILITY -> isAccessibilityServiceEnabled(context)
             PermissionType.BATTERY_OPTIMIZATION -> isIgnoringBatteryOptimizations(context)
             PermissionType.NOTIFICATION -> hasNotificationPermission(context)
         }
@@ -148,7 +135,6 @@ object PermissionHelper {
         when (type) {
             PermissionType.OVERLAY -> requestOverlayPermission(context)
             PermissionType.USAGE_ACCESS -> requestUsageAccessPermission(context)
-            PermissionType.ACCESSIBILITY -> openAccessibilitySettings(context)
             PermissionType.BATTERY_OPTIMIZATION -> requestIgnoreBatteryOptimizations(context)
             PermissionType.NOTIFICATION -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -166,8 +152,7 @@ object PermissionHelper {
      * True if mandatory permissions for reliable locking are granted.
      */
     fun hasAllMandatoryPermissions(context: Context): Boolean {
-        return hasOverlayPermission(context) &&
-                (hasUsageAccessPermission(context) || isAccessibilityServiceEnabled(context))
+        return hasOverlayPermission(context) && hasUsageAccessPermission(context)
     }
 
     /**

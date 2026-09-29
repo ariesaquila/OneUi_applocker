@@ -18,11 +18,6 @@ enum class PermissionType(
         descRes = R.string.perm_usage_desc,
         isRequired = true
     ),
-    ACCESSIBILITY(
-        titleRes = R.string.perm_accessibility_title,
-        descRes = R.string.perm_accessibility_desc,
-        isRequired = false // Recommended for zero latency, but UsageStats fallback exists
-    ),
     BATTERY_OPTIMIZATION(
         titleRes = R.string.perm_battery_title,
         descRes = R.string.perm_battery_desc,

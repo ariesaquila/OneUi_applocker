@@ -43,11 +43,7 @@ class AppLockerApp : Application() {
             val lockedApps = database.lockedAppDao().getAllLockedPackageNamesSync()
             AppLockStateHolder.updateLockedPackages(lockedApps)
 
-            // If Accessibility is active, zero notifications needed!
-            // Only start fallback service if Accessibility is off and Usage Stats is granted.
-            if (PermissionHelper.isAccessibilityServiceEnabled(this@AppLockerApp)) {
-                AppMonitorForegroundService.stop(this@AppLockerApp)
-            } else if (PermissionHelper.hasUsageAccessPermission(this@AppLockerApp)) {
+            if (PermissionHelper.hasUsageAccessPermission(this@AppLockerApp)) {
                 AppMonitorForegroundService.start(this@AppLockerApp)
             }
         }

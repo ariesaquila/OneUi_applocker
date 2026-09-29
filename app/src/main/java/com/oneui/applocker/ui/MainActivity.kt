@@ -110,15 +110,8 @@ class MainActivity : ComponentActivity() {
         return false
     }
 
-    /**
-     * If Accessibility Service is enabled, it handles 100% of protection with 0ms latency.
-     * In that case, we STOP AppMonitorForegroundService so NO notification appears in the notification shade!
-     */
     private fun manageBackgroundService() {
-        if (PermissionHelper.isAccessibilityServiceEnabled(this)) {
-            AppMonitorForegroundService.stop(this)
-        } else if (PermissionHelper.hasUsageAccessPermission(this)) {
-            // Only run as fallback when accessibility service is not active
+        if (PermissionHelper.hasUsageAccessPermission(this)) {
             AppMonitorForegroundService.start(this)
         }
     }

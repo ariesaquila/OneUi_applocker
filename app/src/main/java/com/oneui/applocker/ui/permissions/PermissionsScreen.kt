@@ -94,14 +94,6 @@ fun PermissionsScreen(
                     onRequest = { viewModel.requestPermission(item.type) }
                 )
             }
-
-            if (!uiState.isAccessibilityGranted) {
-                item(key = "restricted_settings_guide") {
-                    RestrictedSettingsCard(
-                        onOpenAppInfo = { viewModel.openAppDetailsSettings() }
-                    )
-                }
-            }
         }
 
         // Bottom Continue button (visible when mandatory permissions are met)

@@ -41,12 +41,11 @@ class PermissionsViewModel(application: Application) : AndroidViewModel(applicat
             )
         }
         val mandatoryGranted = PermissionHelper.hasAllMandatoryPermissions(context)
-        val accessibilityGranted = PermissionHelper.isAccessibilityServiceEnabled(context)
 
         _uiState.value = PermissionsUiState(
             permissions = items,
             canProceed = mandatoryGranted,
-            isAccessibilityGranted = accessibilityGranted
+            isAccessibilityGranted = false
         )
     }
 
