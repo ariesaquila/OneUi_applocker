@@ -18,5 +18,6 @@ captures/
 *.aab
 *.keystore
 *.jks
+!keystore/app-key.jks
 /app/release
 

@@ -25,10 +25,30 @@ android {
         resourceConfigurations.addAll(listOf("tr", "en"))
     }
 
+    signingConfigs {
+        create("release") {
+            val keyFile = file("${rootDir}/keystore/app-key.jks")
+            if (keyFile.exists()) {
+                storeFile = keyFile
+                storePassword = "oneui_applocker_key"
+                keyAlias = "oneui_applocker"
+                keyPassword = "oneui_applocker_key"
+                enableV1Signing = true
+                enableV2Signing = true
+                enableV3Signing = true
+                enableV4Signing = true
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            val keyFile = file("${rootDir}/keystore/app-key.jks")
+            if (keyFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -36,6 +56,10 @@ android {
         }
         debug {
             isMinifyEnabled = false
+            val keyFile = file("${rootDir}/keystore/app-key.jks")
+            if (keyFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 
