@@ -101,6 +101,7 @@ fun SetupMasterKeyScreen(
     var confirmPattern by remember { mutableStateOf<List<Int>>(emptyList()) }
 
     // Recovery Question State
+    val securityQuestions = remember(securityManager) { securityManager.getSecurityQuestions() }
     var selectedQuestionIndex by remember { mutableStateOf(0) }
     var customQuestion by remember { mutableStateOf("") }
     var recoveryAnswer by remember { mutableStateOf("") }
@@ -144,7 +145,7 @@ fun SetupMasterKeyScreen(
                             phase = SetupPhase.RECOVERY_QUESTION
                         }
                     } else {
-                        triggerError("PIN\'ler eşleşmiyor, lütfen tekrar deneyin")
+                        triggerError(context.getString(R.string.pin_mismatch))
                         confirmPin = ""
                     }
                 }
@@ -172,7 +173,7 @@ fun SetupMasterKeyScreen(
         if (isError) return
 
         if (pattern.size < 4) {
-            triggerError("En az 4 nokta birleştirmelisiniz")
+            triggerError(context.getString(R.string.pattern_min_dots))
             return
         }
 
@@ -192,7 +193,7 @@ fun SetupMasterKeyScreen(
                     phase = SetupPhase.RECOVERY_QUESTION
                 }
             } else {
-                triggerError("Desenler eşleşmedi, lütfen baştan deneyin")
+                triggerError(context.getString(R.string.pattern_mismatch))
                 coroutineScope.launch {
                     delay(800)
                     phase = SetupPhase.ENTER
@@ -204,10 +205,10 @@ fun SetupMasterKeyScreen(
     }
 
     fun saveRecoveryQuestion() {
-        val question = if (selectedQuestionIndex < SecurityManager.DEFAULT_SECURITY_QUESTIONS.size) {
-            SecurityManager.DEFAULT_SECURITY_QUESTIONS[selectedQuestionIndex]
+        val question = if (selectedQuestionIndex < securityQuestions.size) {
+            securityQuestions[selectedQuestionIndex]
         } else {
-            customQuestion.ifBlank { "Güvenlik Sorusu" }
+            customQuestion.ifBlank { context.getString(R.string.security_question_label) }
         }
         if (recoveryAnswer.isNotBlank()) {
             securityManager.setSecurityQuestion(question, recoveryAnswer)
@@ -236,7 +237,7 @@ fun SetupMasterKeyScreen(
                 IconButton(onClick = onBack) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_arrow_back),
-                        contentDescription = "Geri",
+                        contentDescription = stringResource(R.string.btn_back),
                         tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
@@ -276,7 +277,7 @@ fun SetupMasterKeyScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "PIN Kodu",
+                            text = stringResource(R.string.tab_pin),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = if (pinSelected) FontWeight.Bold else FontWeight.Normal,
                             color = if (pinSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
@@ -300,7 +301,7 @@ fun SetupMasterKeyScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Desen",
+                            text = stringResource(R.string.tab_pattern),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = if (patternSelected) FontWeight.Bold else FontWeight.Normal,
                             color = if (patternSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
@@ -313,15 +314,15 @@ fun SetupMasterKeyScreen(
 
             // Title & Instruction
             val titleText = when (phase) {
-                SetupPhase.ENTER -> if (selectedMode == SetupMode.PIN) "Güvenlik PIN\'i Belirleyin" else "Kilit Desenini Çizin"
-                SetupPhase.CONFIRM -> if (selectedMode == SetupMode.PIN) "PIN\'inizi Doğrulayın" else "Deseni Doğrulayın"
-                SetupPhase.RECOVERY_QUESTION -> "Kurtarma Güvenlik Sorusu"
+                SetupPhase.ENTER -> if (selectedMode == SetupMode.PIN) stringResource(R.string.pin_title_draw) else stringResource(R.string.pattern_title_draw)
+                SetupPhase.CONFIRM -> if (selectedMode == SetupMode.PIN) stringResource(R.string.pin_title_confirm) else stringResource(R.string.pattern_title_confirm)
+                SetupPhase.RECOVERY_QUESTION -> stringResource(R.string.settings_security_question)
             }
 
             val subtitleText = when (phase) {
-                SetupPhase.ENTER -> if (selectedMode == SetupMode.PIN) "Kilitli uygulamaları açmak için 4 haneli bir PIN girin" else "En az 4 noktayı birleştirerek bir desen oluşturun"
-                SetupPhase.CONFIRM -> if (selectedMode == SetupMode.PIN) "Oluşturduğunuz PIN\'i onaylamak için tekrar girin" else "Oluşturduğunuz deseni onaylamak için tekrar çizin"
-                SetupPhase.RECOVERY_QUESTION -> "Şifrenizi unutursanız sıfırlayabilmek için bir kurtarma sorusu belirleyin"
+                SetupPhase.ENTER -> if (selectedMode == SetupMode.PIN) stringResource(R.string.pin_subtitle_draw) else stringResource(R.string.pattern_subtitle_draw)
+                SetupPhase.CONFIRM -> if (selectedMode == SetupMode.PIN) stringResource(R.string.pin_subtitle_confirm) else stringResource(R.string.pattern_subtitle_confirm)
+                SetupPhase.RECOVERY_QUESTION -> stringResource(R.string.settings_security_question_desc)
             }
 
             Text(
@@ -372,18 +373,18 @@ fun SetupMasterKeyScreen(
                     // Question Dropdown
                     Box(modifier = Modifier.fillMaxWidth()) {
                         OutlinedTextField(
-                            value = if (selectedQuestionIndex < SecurityManager.DEFAULT_SECURITY_QUESTIONS.size) {
-                                SecurityManager.DEFAULT_SECURITY_QUESTIONS[selectedQuestionIndex]
+                            value = if (selectedQuestionIndex < securityQuestions.size) {
+                                securityQuestions[selectedQuestionIndex]
                             } else {
                                 customQuestion
                             },
                             onValueChange = { customQuestion = it },
-                            label = { Text("Güvenlik Sorusu") },
-                            readOnly = selectedQuestionIndex < SecurityManager.DEFAULT_SECURITY_QUESTIONS.size,
+                            label = { Text(stringResource(R.string.security_question_label)) },
+                            readOnly = selectedQuestionIndex < securityQuestions.size,
                             trailingIcon = {
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_settings),
-                                    contentDescription = "Soruları Gör",
+                                    contentDescription = stringResource(R.string.security_question_label),
                                     modifier = Modifier
                                         .size(20.dp)
                                         .clickable { isQuestionDropdownOpen = true }
@@ -399,7 +400,7 @@ fun SetupMasterKeyScreen(
                             )
                         )
 
-                        if (selectedQuestionIndex < SecurityManager.DEFAULT_SECURITY_QUESTIONS.size) {
+                        if (selectedQuestionIndex < securityQuestions.size) {
                             Box(
                                 modifier = Modifier
                                     .matchParentSize()
@@ -411,7 +412,7 @@ fun SetupMasterKeyScreen(
                             expanded = isQuestionDropdownOpen,
                             onDismissRequest = { isQuestionDropdownOpen = false }
                         ) {
-                            SecurityManager.DEFAULT_SECURITY_QUESTIONS.forEachIndexed { index, q ->
+                            securityQuestions.forEachIndexed { index, q ->
                                 DropdownMenuItem(
                                     text = { Text(q, style = MaterialTheme.typography.bodyMedium) },
                                     onClick = {
@@ -429,8 +430,8 @@ fun SetupMasterKeyScreen(
                     OutlinedTextField(
                         value = recoveryAnswer,
                         onValueChange = { recoveryAnswer = it },
-                        label = { Text("Cevabınız") },
-                        placeholder = { Text("Kurtarma cevabını girin") },
+                        label = { Text(stringResource(R.string.security_question_answer_label)) },
+                        placeholder = { Text(stringResource(R.string.security_question_answer_hint)) },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                         keyboardActions = KeyboardActions(onDone = { saveRecoveryQuestion() }),
@@ -453,7 +454,7 @@ fun SetupMasterKeyScreen(
                         colors = ButtonDefaults.buttonColors(containerColor = OneUiBlue)
                     ) {
                         Text(
-                            text = if (recoveryAnswer.isNotBlank()) "Kaydet ve Tamamla" else "Tamamla",
+                            text = if (recoveryAnswer.isNotBlank()) stringResource(R.string.btn_save_and_finish) else stringResource(R.string.btn_finish),
                             style = MaterialTheme.typography.labelLarge,
                             fontWeight = FontWeight.Bold
                         )
@@ -463,7 +464,7 @@ fun SetupMasterKeyScreen(
 
                     TextButton(onClick = onSetupComplete) {
                         Text(
-                            text = "Şimdilik Atla",
+                            text = stringResource(R.string.btn_skip_for_now),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -514,7 +515,7 @@ fun SetupMasterKeyScreen(
                                 }
                             ) {
                                 Text(
-                                    text = "Yeniden Çiz",
+                                    text = stringResource(R.string.btn_redraw),
                                     style = MaterialTheme.typography.labelLarge,
                                     color = OneUiBlue
                                 )

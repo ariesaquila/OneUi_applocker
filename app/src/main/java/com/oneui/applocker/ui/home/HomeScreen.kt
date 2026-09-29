@@ -86,7 +86,7 @@ fun HomeScreen(
                 IconButton(onClick = onNavigateToSettings) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_settings),
-                        contentDescription = "Ayarlar",
+                        contentDescription = stringResource(R.string.title_settings),
                         tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.size(24.dp)
                     )
@@ -115,21 +115,21 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Gerekli izinler eksik",
+                            text = stringResource(R.string.home_missing_permissions_title),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "Kilitlemenin çalışması için izinleri etkinleştirin.",
+                            text = stringResource(R.string.home_missing_permissions_desc),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "İncele",
+                        text = stringResource(R.string.home_missing_permissions_action),
                         style = MaterialTheme.typography.labelLarge,
                         color = OneUiBlue
                     )

@@ -99,13 +99,13 @@ fun SettingsScreen(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "One UI AppLocker'ı Kilitle",
+                                text = stringResource(R.string.settings_self_lock_title),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = "Bu uygulama açılırken PIN / Desen veya parmak izi iste",
+                                text = stringResource(R.string.settings_self_lock_desc),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -200,13 +200,17 @@ fun SettingsScreen(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Şifreyi / Deseni Değiştir",
+                                text = stringResource(R.string.settings_change_credentials),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = if (settings.lockType == LockType.PIN) "Mevcut PIN kodunuzu güncelleyin" else "Mevcut kilit deseninizi güncelleyin",
+                                text = if (settings.lockType == LockType.PIN) {
+                                    stringResource(R.string.settings_change_credentials_pin_desc)
+                                } else {
+                                    stringResource(R.string.settings_change_credentials_pattern_desc)
+                                },
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -241,9 +245,9 @@ fun SettingsScreen(
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
                                 text = if (viewModel.hasSecurityQuestion()) {
-                                    "Belirlendi: ${viewModel.getSecurityQuestion() ?: ""}"
+                                    stringResource(R.string.settings_security_question_set, viewModel.getSecurityQuestion() ?: "")
                                 } else {
-                                    "Belirlenmedi (Şifre sıfırlama için ekleyin)"
+                                    stringResource(R.string.settings_security_question_not_set)
                                 },
                                 style = MaterialTheme.typography.bodySmall,
                                 color = if (viewModel.hasSecurityQuestion()) OneUiBlue else MaterialTheme.colorScheme.onSurfaceVariant
@@ -417,7 +421,7 @@ fun SettingsScreen(
 
             // Permissions Status Row
             item {
-                SettingsSectionTitle(title = "SİSTEM İZİNLERİ")
+                SettingsSectionTitle(title = stringResource(R.string.settings_section_permissions))
                 OneUiCard(
                     onClick = onNavigateToPermissions
                 ) {
@@ -427,13 +431,13 @@ fun SettingsScreen(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "İzin Durumunu Görüntüle",
+                                text = stringResource(R.string.settings_view_permissions_title),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = "Gerekli erişilebilirlik, bildirim ve kullanım izinlerini kontrol edin",
+                                text = stringResource(R.string.settings_view_permissions_desc),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -452,6 +456,7 @@ fun SettingsScreen(
         if (showSecurityQuestionDialog) {
             SecurityQuestionConfigDialog(
                 currentQuestion = viewModel.getSecurityQuestion(),
+                questions = viewModel.getSecurityQuestions(),
                 onSave = { question, answer ->
                     viewModel.saveSecurityQuestion(question, answer)
                     showSecurityQuestionDialog = false
@@ -465,11 +470,12 @@ fun SettingsScreen(
 @Composable
 private fun SecurityQuestionConfigDialog(
     currentQuestion: String?,
+    questions: List<String>,
     onSave: (question: String, answer: String) -> Unit,
     onDismiss: () -> Unit
 ) {
-    var selectedIndex by remember {
-        val initialIdx = SecurityManager.DEFAULT_SECURITY_QUESTIONS.indexOf(currentQuestion)
+    var selectedIndex by remember(questions) {
+        val initialIdx = questions.indexOf(currentQuestion)
         mutableStateOf(if (initialIdx >= 0) initialIdx else 0)
     }
     var answer by remember { mutableStateOf("") }
@@ -499,14 +505,14 @@ private fun SecurityQuestionConfigDialog(
 
                 androidx.compose.foundation.layout.Box(modifier = Modifier.fillMaxWidth()) {
                     OutlinedTextField(
-                        value = SecurityManager.DEFAULT_SECURITY_QUESTIONS[selectedIndex],
+                        value = if (selectedIndex < questions.size) questions[selectedIndex] else "",
                         onValueChange = {},
                         readOnly = true,
                         label = { Text(stringResource(R.string.security_question_label)) },
                         trailingIcon = {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_settings),
-                                contentDescription = "Seç",
+                                contentDescription = stringResource(R.string.cd_select),
                                 modifier = Modifier.size(20.dp)
                             )
                         },
@@ -528,7 +534,7 @@ private fun SecurityQuestionConfigDialog(
                         expanded = isDropdownOpen,
                         onDismissRequest = { isDropdownOpen = false }
                     ) {
-                        SecurityManager.DEFAULT_SECURITY_QUESTIONS.forEachIndexed { idx, q ->
+                        questions.forEachIndexed { idx, q ->
                             DropdownMenuItem(
                                 text = { Text(q, style = MaterialTheme.typography.bodyMedium) },
                                 onClick = {
@@ -548,7 +554,7 @@ private fun SecurityQuestionConfigDialog(
                         answer = it
                         isError = false
                     },
-                    label = { Text("Kurtarma Cevabınız") },
+                    label = { Text(stringResource(R.string.security_question_answer_label)) },
                     placeholder = { Text(stringResource(R.string.security_question_answer_hint)) },
                     singleLine = true,
                     isError = isError,
@@ -562,7 +568,7 @@ private fun SecurityQuestionConfigDialog(
 
                 if (isError) {
                     Text(
-                        text = "Lütfen bir cevap girin",
+                        text = stringResource(R.string.security_question_empty_error),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.error,
                         modifier = Modifier.padding(top = 4.dp, start = 4.dp)
@@ -574,7 +580,7 @@ private fun SecurityQuestionConfigDialog(
             Button(
                 onClick = {
                     if (answer.isNotBlank()) {
-                        val question = SecurityManager.DEFAULT_SECURITY_QUESTIONS[selectedIndex]
+                        val question = if (selectedIndex < questions.size) questions[selectedIndex] else ""
                         onSave(question, answer)
                     } else {
                         isError = true

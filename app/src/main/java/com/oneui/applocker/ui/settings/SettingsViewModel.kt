@@ -80,6 +80,8 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     fun getSecurityQuestion(): String? = securityManager.getSecurityQuestion()
 
+    fun getSecurityQuestions(): List<String> = securityManager.getSecurityQuestions()
+
     fun saveSecurityQuestion(question: String, answer: String) {
         securityManager.setSecurityQuestion(question, answer)
     }

@@ -11,7 +11,7 @@ import java.security.SecureRandom
  * Manages secure storage and verification of PIN codes and Patterns
  * using Android KeyStore and EncryptedSharedPreferences.
  */
-class SecurityManager(context: Context) {
+class SecurityManager(private val context: Context) {
 
     private val sharedPreferences: SharedPreferences = try {
         val masterKey = MasterKey.Builder(context)
@@ -112,6 +112,14 @@ class SecurityManager(context: Context) {
 
     fun clearSecurity() {
         sharedPreferences.edit().clear().apply()
+    }
+
+    fun getSecurityQuestions(): List<String> {
+        return try {
+            context.resources.getStringArray(com.oneui.applocker.R.array.default_security_questions).toList()
+        } catch (e: Exception) {
+            DEFAULT_SECURITY_QUESTIONS
+        }
     }
 
     private fun generateSalt(): String {

@@ -160,7 +160,7 @@ private fun PermissionCard(
                                 .padding(horizontal = 6.dp, vertical = 2.dp)
                         ) {
                             Text(
-                                text = "Zorunlu",
+                                text = stringResource(R.string.perm_required_badge),
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
                                 color = OneUiBlue

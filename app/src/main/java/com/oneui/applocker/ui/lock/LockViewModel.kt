@@ -149,7 +149,7 @@ class LockViewModel(
             } else {
                 _uiState.value = _uiState.value.copy(
                     isError = true,
-                    errorMessage = "Hatalı PIN"
+                    errorMessage = getApplication<Application>().getString(com.oneui.applocker.R.string.lock_wrong_pin)
                 )
                 delay(600)
                 _uiState.value = _uiState.value.copy(
@@ -169,7 +169,7 @@ class LockViewModel(
             } else {
                 _uiState.value = _uiState.value.copy(
                     isError = true,
-                    errorMessage = "Hatalı desen"
+                    errorMessage = getApplication<Application>().getString(com.oneui.applocker.R.string.lock_wrong_pattern)
                 )
                 delay(700)
                 _uiState.value = _uiState.value.copy(

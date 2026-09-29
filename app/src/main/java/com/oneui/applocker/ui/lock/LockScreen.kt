@@ -108,7 +108,7 @@ fun LockScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = uiState.appName.ifBlank { "Uygulama Kilitli" },
+                text = uiState.appName.ifBlank { stringResource(R.string.app_locked_placeholder) },
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground,
@@ -198,7 +198,7 @@ fun LockScreen(
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_fingerprint),
-                                contentDescription = "Biyometrik Giriş",
+                                contentDescription = stringResource(R.string.biometric_prompt_title),
                                 tint = OneUiBlue,
                                 modifier = Modifier.size(24.dp)
                             )
@@ -312,7 +312,7 @@ private fun ForgotPasswordDialog(
                             answer = it
                             isError = false
                         },
-                        label = { Text("Cevabınız") },
+                        label = { Text(stringResource(R.string.security_question_answer_label)) },
                         placeholder = { Text(stringResource(R.string.security_question_answer_hint)) },
                         singleLine = true,
                         isError = isError,
@@ -347,7 +347,7 @@ private fun ForgotPasswordDialog(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = "Doğrula ve Şifreyi Sıfırla",
+                            text = stringResource(R.string.btn_verify_and_reset),
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = OneUiBlue
@@ -377,7 +377,7 @@ private fun ForgotPasswordDialog(
                                 modifier = Modifier.size(20.dp)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Parmak İzi ile Doğrula")
+                            Text(stringResource(R.string.btn_verify_with_biometrics))
                         }
                     }
                 }
@@ -398,7 +398,7 @@ private fun ForgotPasswordDialog(
                     shape = RoundedCornerShape(16.dp)
                 ) {
                     Text(
-                        text = "Kilidi Aç",
+                        text = stringResource(R.string.btn_unlock),
                         fontWeight = FontWeight.Bold
                     )
                 }

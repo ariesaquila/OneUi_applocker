@@ -90,7 +90,7 @@ fun OneUiSearchBar(
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_clear),
-                        contentDescription = "Temizle",
+                        contentDescription = stringResource(R.string.cd_clear),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(18.dp)
                     )
