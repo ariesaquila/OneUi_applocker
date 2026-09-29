@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.oneui.applocker.core.security.AppLockStateHolder
 import com.oneui.applocker.core.security.RelockPolicy
+import com.oneui.applocker.data.model.AppLanguage
 import com.oneui.applocker.data.model.LockSettings
 import com.oneui.applocker.data.model.LockType
 import com.oneui.applocker.data.model.ThemeMode
@@ -25,6 +26,7 @@ class SettingsRepository(private val context: Context) {
         val RELOCK_POLICY = stringPreferencesKey("relock_policy")
         val VIBRATION_ENABLED = booleanPreferencesKey("vibration_enabled")
         val THEME_MODE = stringPreferencesKey("theme_mode")
+        val APP_LANGUAGE = stringPreferencesKey("app_language")
     }
 
     val settingsFlow: Flow<LockSettings> = context.dataStore.data.map { preferences ->
@@ -53,6 +55,13 @@ class SettingsRepository(private val context: Context) {
             ThemeMode.SYSTEM
         }
 
+        val languageString = preferences[PreferencesKeys.APP_LANGUAGE] ?: AppLanguage.SYSTEM.name
+        val appLanguage = try {
+            AppLanguage.valueOf(languageString)
+        } catch (e: Exception) {
+            AppLanguage.SYSTEM
+        }
+
         // Keep runtime AppLockStateHolder updated
         AppLockStateHolder.relockPolicy = policy
 
@@ -61,7 +70,8 @@ class SettingsRepository(private val context: Context) {
             isBiometricEnabled = biometricEnabled,
             relockPolicy = policy,
             isVibrationEnabled = vibrationEnabled,
-            themeMode = themeMode
+            themeMode = themeMode,
+            appLanguage = appLanguage
         )
     }
 
@@ -93,6 +103,12 @@ class SettingsRepository(private val context: Context) {
     suspend fun setThemeMode(mode: ThemeMode) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.THEME_MODE] = mode.name
+        }
+    }
+
+    suspend fun setAppLanguage(language: AppLanguage) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.APP_LANGUAGE] = language.name
         }
     }
 }

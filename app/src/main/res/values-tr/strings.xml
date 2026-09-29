@@ -104,6 +104,18 @@
     <string name="theme_dark">Koyu Tema</string>
     <string name="theme_amoled">AMOLED Siyah</string>
     <string name="theme_amoled_desc">OLED ve AMOLED ekranlar için saf siyah arka plan ve pil tasarrufu</string>
+
+    <!-- Language -->
+    <string name="settings_section_language">Dil</string>
+    <string name="settings_language">Uygulama Dili</string>
+    <string name="settings_language_desc">Uygulamanın görüntüleneceği dili seçin</string>
+    <string name="language_system">Sistem Varsayılanı</string>
+    <string name="language_system_desc">Cihaz dilini takip et</string>
+    <string name="language_tr">Türkçe</string>
+    <string name="language_tr_desc">Türkçe</string>
+    <string name="language_en">English</string>
+    <string name="language_en_desc">İngilizce</string>
+
     <string name="settings_section_permissions">SİSTEM İZİNLERİ</string>
     <string name="settings_view_permissions_title">İzin Durumunu Görüntüle</string>
     <string name="settings_view_permissions_desc">Gerekli erişilebilirlik, bildirim ve kullanım izinlerini kontrol edin</string>

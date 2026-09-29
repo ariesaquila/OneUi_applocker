@@ -72,6 +72,13 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    fun onLanguageSelected(language: com.oneui.applocker.data.model.AppLanguage) {
+        viewModelScope.launch {
+            settingsRepository.setAppLanguage(language)
+            com.oneui.applocker.core.util.LocaleHelper.applyLocale(getApplication(), language)
+        }
+    }
+
     fun hasPin(): Boolean = securityManager.hasPin()
 
     fun hasPattern(): Boolean = securityManager.hasPattern()

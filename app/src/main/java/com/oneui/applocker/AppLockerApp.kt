@@ -4,12 +4,14 @@ import android.app.Application
 import com.oneui.applocker.core.permission.PermissionHelper
 import com.oneui.applocker.core.security.AppLockStateHolder
 import com.oneui.applocker.core.security.SecurityManager
+import com.oneui.applocker.core.util.LocaleHelper
 import com.oneui.applocker.data.database.AppDatabase
 import com.oneui.applocker.data.repository.AppRepository
 import com.oneui.applocker.data.repository.SettingsRepository
 import com.oneui.applocker.service.AppMonitorForegroundService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class AppLockerApp : Application() {
@@ -38,8 +40,11 @@ class AppLockerApp : Application() {
         settingsRepository = SettingsRepository(this)
         securityManager = SecurityManager(this)
 
-        // Pre-warm locked apps cache into memory for O(1) service verification
+        // Pre-warm locked apps cache and apply saved locale
         CoroutineScope(Dispatchers.IO).launch {
+            val settings = settingsRepository.settingsFlow.first()
+            LocaleHelper.applyLocale(this@AppLockerApp, settings.appLanguage)
+
             val lockedApps = database.lockedAppDao().getAllLockedPackageNamesSync()
             AppLockStateHolder.updateLockedPackages(lockedApps)
 

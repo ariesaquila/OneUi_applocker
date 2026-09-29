@@ -48,6 +48,7 @@ import com.oneui.applocker.core.security.RelockPolicy
 import com.oneui.applocker.core.security.SecurityManager
 import com.oneui.applocker.core.theme.OneUiBlue
 import com.oneui.applocker.core.theme.OneUiShapes
+import com.oneui.applocker.data.model.AppLanguage
 import com.oneui.applocker.data.model.LockType
 import com.oneui.applocker.data.model.ThemeMode
 
@@ -413,6 +414,57 @@ fun SettingsScreen(
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Language Group
+            item {
+                SettingsSectionTitle(title = stringResource(R.string.settings_section_language))
+                OneUiCard {
+                    Text(
+                        text = stringResource(R.string.settings_language),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    val languages = listOf(
+                        AppLanguage.SYSTEM to (stringResource(R.string.language_system) to stringResource(R.string.language_system_desc)),
+                        AppLanguage.TURKISH to (stringResource(R.string.language_tr) to stringResource(R.string.language_tr_desc)),
+                        AppLanguage.ENGLISH to (stringResource(R.string.language_en) to stringResource(R.string.language_en_desc))
+                    )
+
+                    languages.forEach { (lang, pair) ->
+                        val (label, desc) = pair
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { viewModel.onLanguageSelected(lang) }
+                                .padding(vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(
+                                    id = if (settings.appLanguage == lang) R.drawable.ic_radio_checked else R.drawable.ic_radio_unchecked
+                                ),
+                                contentDescription = null,
+                                tint = if (settings.appLanguage == lang) OneUiBlue else MaterialTheme.colorScheme.outline
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Column {
+                                Text(
+                                    text = label,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                                Text(
+                                    text = desc,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
                             }
                         }
                     }

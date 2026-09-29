@@ -104,6 +104,18 @@
     <string name="theme_dark">Dark Theme</string>
     <string name="theme_amoled">AMOLED Black</string>
     <string name="theme_amoled_desc">Pure black background for OLED/AMOLED screens &amp; battery saving</string>
+
+    <!-- Language -->
+    <string name="settings_section_language">Language</string>
+    <string name="settings_language">App Language</string>
+    <string name="settings_language_desc">Select application display language</string>
+    <string name="language_system">System Default</string>
+    <string name="language_system_desc">Follow device language</string>
+    <string name="language_tr">Türkçe</string>
+    <string name="language_tr_desc">Turkish</string>
+    <string name="language_en">English</string>
+    <string name="language_en_desc">English</string>
+
     <string name="settings_section_permissions">SYSTEM PERMISSIONS</string>
     <string name="settings_view_permissions_title">View Permission Status</string>
     <string name="settings_view_permissions_desc">Check accessibility, notification, and usage permissions</string>

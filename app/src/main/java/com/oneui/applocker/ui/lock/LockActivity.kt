@@ -13,10 +13,16 @@ import androidx.lifecycle.lifecycleScope
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import android.content.res.Configuration
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import com.oneui.applocker.core.security.AppLockStateHolder
 import com.oneui.applocker.core.security.BiometricHelper
 import com.oneui.applocker.core.theme.OneUiAppLockerTheme
 import com.oneui.applocker.core.util.DisplayRefreshRateHelper
+import com.oneui.applocker.core.util.LocaleHelper
 import com.oneui.applocker.data.model.ThemeMode
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -89,9 +95,28 @@ class LockActivity : FragmentActivity() {
 
         setContent {
             val uiState by viewModel.uiState.collectAsState()
+            val currentLocale = remember(uiState.appLanguage) {
+                LocaleHelper.getLocaleForLanguage(uiState.appLanguage)
+            }
+            val configuration = LocalConfiguration.current
+            val localizedConfiguration = remember(configuration, currentLocale) {
+                Configuration(configuration).apply {
+                    setLocale(currentLocale)
+                    setLayoutDirection(currentLocale)
+                }
+            }
+            val baseContext = LocalContext.current
+            val localizedContext = remember(baseContext, currentLocale) {
+                LocaleHelper.wrapContext(baseContext, uiState.appLanguage)
+            }
 
-            OneUiAppLockerTheme(themeMode = uiState.themeMode) {
-                LockScreen(viewModel = viewModel)
+            CompositionLocalProvider(
+                LocalConfiguration provides localizedConfiguration,
+                LocalContext provides localizedContext
+            ) {
+                OneUiAppLockerTheme(themeMode = uiState.themeMode) {
+                    LockScreen(viewModel = viewModel)
+                }
             }
         }
     }
