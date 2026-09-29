@@ -25,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -190,7 +189,7 @@ fun OneUiPinKeypad(
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_fingerprint),
-                        contentDescription = stringResource(R.string.cd_biometric),
+                        contentDescription = "Biyometrik Giriş",
                         tint = OneUiBlue,
                         modifier = Modifier.size(32.dp)
                     )
@@ -216,7 +215,7 @@ fun OneUiPinKeypad(
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_backspace),
-                    contentDescription = stringResource(R.string.cd_backspace),
+                    contentDescription = "Geri Al",
                     tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.size(26.dp)
                 )

@@ -86,7 +86,7 @@ fun HomeScreen(
                 IconButton(onClick = onNavigateToSettings) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_settings),
-                        contentDescription = stringResource(R.string.title_settings),
+                        contentDescription = "Ayarlar",
                         tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.size(24.dp)
                     )

@@ -114,14 +114,6 @@ class SecurityManager(private val context: Context) {
         sharedPreferences.edit().clear().apply()
     }
 
-    fun getSecurityQuestions(): List<String> {
-        return try {
-            context.resources.getStringArray(com.oneui.applocker.R.array.default_security_questions).toList()
-        } catch (e: Exception) {
-            DEFAULT_SECURITY_QUESTIONS
-        }
-    }
-
     private fun generateSalt(): String {
         val random = SecureRandom()
         val salt = ByteArray(16)
@@ -134,6 +126,14 @@ class SecurityManager(private val context: Context) {
         val combined = "$salt:$input"
         val bytes = digest.digest(combined.toByteArray(Charsets.UTF_8))
         return bytes.joinToString("") { "%02x".format(it) }
+    }
+
+    fun getSecurityQuestions(): List<String> {
+        return try {
+            context.resources.getStringArray(com.oneui.applocker.R.array.security_questions).toList()
+        } catch (e: Exception) {
+            DEFAULT_SECURITY_QUESTIONS
+        }
     }
 
     companion object {

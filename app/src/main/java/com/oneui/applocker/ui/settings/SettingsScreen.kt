@@ -48,7 +48,6 @@ import com.oneui.applocker.core.security.RelockPolicy
 import com.oneui.applocker.core.security.SecurityManager
 import com.oneui.applocker.core.theme.OneUiBlue
 import com.oneui.applocker.core.theme.OneUiShapes
-import com.oneui.applocker.data.model.AppLanguage
 import com.oneui.applocker.data.model.LockType
 import com.oneui.applocker.data.model.ThemeMode
 
@@ -100,13 +99,13 @@ fun SettingsScreen(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = stringResource(R.string.settings_self_lock_title),
+                                text = stringResource(R.string.settings_lock_self_app),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = stringResource(R.string.settings_self_lock_desc),
+                                text = stringResource(R.string.settings_lock_self_app_desc),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -201,17 +200,13 @@ fun SettingsScreen(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = stringResource(R.string.settings_change_credentials),
+                                text = stringResource(R.string.settings_change_credentials_title),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = if (settings.lockType == LockType.PIN) {
-                                    stringResource(R.string.settings_change_credentials_pin_desc)
-                                } else {
-                                    stringResource(R.string.settings_change_credentials_pattern_desc)
-                                },
+                                text = if (settings.lockType == LockType.PIN) stringResource(R.string.settings_change_pin_desc) else stringResource(R.string.settings_change_pattern_desc),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -431,41 +426,34 @@ fun SettingsScreen(
                     )
                     Spacer(modifier = Modifier.height(12.dp))
 
+                    val currentLanguage by viewModel.currentLanguage.collectAsState()
                     val languages = listOf(
-                        AppLanguage.SYSTEM to (stringResource(R.string.language_system) to stringResource(R.string.language_system_desc)),
-                        AppLanguage.TURKISH to (stringResource(R.string.language_tr) to stringResource(R.string.language_tr_desc)),
-                        AppLanguage.ENGLISH to (stringResource(R.string.language_en) to stringResource(R.string.language_en_desc))
+                        com.oneui.applocker.core.util.LocaleHelper.LANGUAGE_SYSTEM to stringResource(R.string.language_system),
+                        com.oneui.applocker.core.util.LocaleHelper.LANGUAGE_TR to stringResource(R.string.language_tr),
+                        com.oneui.applocker.core.util.LocaleHelper.LANGUAGE_EN to stringResource(R.string.language_en)
                     )
 
-                    languages.forEach { (lang, pair) ->
-                        val (label, desc) = pair
+                    languages.forEach { (code, label) ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable { viewModel.onLanguageSelected(lang) }
+                                .clickable { viewModel.onLanguageSelected(code) }
                                 .padding(vertical = 8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
                                 painter = painterResource(
-                                    id = if (settings.appLanguage == lang) R.drawable.ic_radio_checked else R.drawable.ic_radio_unchecked
+                                    id = if (currentLanguage == code) R.drawable.ic_radio_checked else R.drawable.ic_radio_unchecked
                                 ),
                                 contentDescription = null,
-                                tint = if (settings.appLanguage == lang) OneUiBlue else MaterialTheme.colorScheme.outline
+                                tint = if (currentLanguage == code) OneUiBlue else MaterialTheme.colorScheme.outline
                             )
                             Spacer(modifier = Modifier.width(12.dp))
-                            Column {
-                                Text(
-                                    text = label,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                                Text(
-                                    text = desc,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
+                            Text(
+                                text = label,
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
                         }
                     }
                 }
@@ -483,13 +471,13 @@ fun SettingsScreen(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = stringResource(R.string.settings_view_permissions_title),
+                                text = stringResource(R.string.settings_permissions_view_title),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = stringResource(R.string.settings_view_permissions_desc),
+                                text = stringResource(R.string.settings_permissions_view_desc),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -508,7 +496,7 @@ fun SettingsScreen(
         if (showSecurityQuestionDialog) {
             SecurityQuestionConfigDialog(
                 currentQuestion = viewModel.getSecurityQuestion(),
-                questions = viewModel.getSecurityQuestions(),
+                availableQuestions = viewModel.getSecurityQuestions(),
                 onSave = { question, answer ->
                     viewModel.saveSecurityQuestion(question, answer)
                     showSecurityQuestionDialog = false
@@ -522,12 +510,12 @@ fun SettingsScreen(
 @Composable
 private fun SecurityQuestionConfigDialog(
     currentQuestion: String?,
-    questions: List<String>,
+    availableQuestions: List<String>,
     onSave: (question: String, answer: String) -> Unit,
     onDismiss: () -> Unit
 ) {
-    var selectedIndex by remember(questions) {
-        val initialIdx = questions.indexOf(currentQuestion)
+    var selectedIndex by remember {
+        val initialIdx = availableQuestions.indexOf(currentQuestion)
         mutableStateOf(if (initialIdx >= 0) initialIdx else 0)
     }
     var answer by remember { mutableStateOf("") }
@@ -556,15 +544,20 @@ private fun SecurityQuestionConfigDialog(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 androidx.compose.foundation.layout.Box(modifier = Modifier.fillMaxWidth()) {
+                    val safeQuestion = if (selectedIndex in availableQuestions.indices) {
+                        availableQuestions[selectedIndex]
+                    } else {
+                        availableQuestions.firstOrNull() ?: ""
+                    }
                     OutlinedTextField(
-                        value = if (selectedIndex < questions.size) questions[selectedIndex] else "",
+                        value = safeQuestion,
                         onValueChange = {},
                         readOnly = true,
                         label = { Text(stringResource(R.string.security_question_label)) },
                         trailingIcon = {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_settings),
-                                contentDescription = stringResource(R.string.cd_select),
+                                contentDescription = stringResource(R.string.btn_select),
                                 modifier = Modifier.size(20.dp)
                             )
                         },
@@ -586,7 +579,7 @@ private fun SecurityQuestionConfigDialog(
                         expanded = isDropdownOpen,
                         onDismissRequest = { isDropdownOpen = false }
                     ) {
-                        questions.forEachIndexed { idx, q ->
+                        availableQuestions.forEachIndexed { idx, q ->
                             DropdownMenuItem(
                                 text = { Text(q, style = MaterialTheme.typography.bodyMedium) },
                                 onClick = {
@@ -606,7 +599,7 @@ private fun SecurityQuestionConfigDialog(
                         answer = it
                         isError = false
                     },
-                    label = { Text(stringResource(R.string.security_question_answer_label)) },
+                    label = { Text(stringResource(R.string.settings_recovery_answer_label)) },
                     placeholder = { Text(stringResource(R.string.security_question_answer_hint)) },
                     singleLine = true,
                     isError = isError,
@@ -620,7 +613,7 @@ private fun SecurityQuestionConfigDialog(
 
                 if (isError) {
                     Text(
-                        text = stringResource(R.string.security_question_empty_error),
+                        text = stringResource(R.string.settings_recovery_answer_empty),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.error,
                         modifier = Modifier.padding(top = 4.dp, start = 4.dp)
@@ -632,7 +625,7 @@ private fun SecurityQuestionConfigDialog(
             Button(
                 onClick = {
                     if (answer.isNotBlank()) {
-                        val question = if (selectedIndex < questions.size) questions[selectedIndex] else ""
+                        val question = SecurityManager.DEFAULT_SECURITY_QUESTIONS[selectedIndex]
                         onSave(question, answer)
                     } else {
                         isError = true

@@ -11,7 +11,6 @@ import androidx.lifecycle.viewModelScope
 import com.oneui.applocker.AppLockerApp
 import com.oneui.applocker.core.security.AppLockStateHolder
 import com.oneui.applocker.core.security.SecurityManager
-import com.oneui.applocker.data.model.AppLanguage
 import com.oneui.applocker.data.model.LockSettings
 import com.oneui.applocker.data.model.LockType
 import com.oneui.applocker.data.model.ThemeMode
@@ -40,7 +39,6 @@ data class LockUiState(
     val isBiometricEnabled: Boolean = true,
     val isVibrationEnabled: Boolean = true,
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
-    val appLanguage: AppLanguage = AppLanguage.SYSTEM,
     val enteredPin: String = "",
     val isError: Boolean = false,
     val errorMessage: String? = null
@@ -111,8 +109,7 @@ class LockViewModel(
                 lockType = settings.lockType,
                 isBiometricEnabled = settings.isBiometricEnabled,
                 isVibrationEnabled = settings.isVibrationEnabled,
-                themeMode = settings.themeMode,
-                appLanguage = settings.appLanguage
+                themeMode = settings.themeMode
             )
 
             // Trigger biometric automatically on appearance if enabled

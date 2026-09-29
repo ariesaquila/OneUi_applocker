@@ -72,11 +72,12 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun onLanguageSelected(language: com.oneui.applocker.data.model.AppLanguage) {
-        viewModelScope.launch {
-            settingsRepository.setAppLanguage(language)
-            com.oneui.applocker.core.util.LocaleHelper.applyLocale(getApplication(), language)
-        }
+    private val _currentLanguage = kotlinx.coroutines.flow.MutableStateFlow(com.oneui.applocker.core.util.LocaleHelper.getCurrentLanguageCode())
+    val currentLanguage: StateFlow<String> = _currentLanguage
+
+    fun onLanguageSelected(code: String) {
+        com.oneui.applocker.core.util.LocaleHelper.setLanguage(code)
+        _currentLanguage.value = code
     }
 
     fun hasPin(): Boolean = securityManager.hasPin()

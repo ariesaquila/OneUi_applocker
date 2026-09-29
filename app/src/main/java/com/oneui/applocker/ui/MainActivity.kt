@@ -13,17 +13,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import android.content.res.Configuration
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import com.oneui.applocker.AppLockerApp
 import com.oneui.applocker.core.permission.PermissionHelper
 import com.oneui.applocker.core.security.AppLockStateHolder
 import com.oneui.applocker.core.theme.OneUiAppLockerTheme
 import com.oneui.applocker.core.util.DisplayRefreshRateHelper
-import com.oneui.applocker.core.util.LocaleHelper
 import com.oneui.applocker.data.model.LockSettings
 import com.oneui.applocker.data.model.ThemeMode
 import com.oneui.applocker.service.AppMonitorForegroundService
@@ -65,35 +59,16 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val settings by settingsRepository.settingsFlow.collectAsState(initial = LockSettings())
-            val currentLocale = remember(settings.appLanguage) {
-                LocaleHelper.getLocaleForLanguage(settings.appLanguage)
-            }
-            val configuration = LocalConfiguration.current
-            val localizedConfiguration = remember(configuration, currentLocale) {
-                Configuration(configuration).apply {
-                    setLocale(currentLocale)
-                    setLayoutDirection(currentLocale)
-                }
-            }
-            val baseContext = LocalContext.current
-            val localizedContext = remember(baseContext, currentLocale) {
-                LocaleHelper.wrapContext(baseContext, settings.appLanguage)
-            }
 
-            CompositionLocalProvider(
-                LocalConfiguration provides localizedConfiguration,
-                LocalContext provides localizedContext
-            ) {
-                OneUiAppLockerTheme(themeMode = settings.themeMode) {
-                    Surface(
-                        modifier = Modifier.fillMaxSize(),
-                        color = MaterialTheme.colorScheme.background
-                    ) {
-                        AppNavHost(
-                            securityManager = securityManager,
-                            startDestination = startDestination
-                        )
-                    }
+            OneUiAppLockerTheme(themeMode = settings.themeMode) {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    AppNavHost(
+                        securityManager = securityManager,
+                        startDestination = startDestination
+                    )
                 }
             }
         }

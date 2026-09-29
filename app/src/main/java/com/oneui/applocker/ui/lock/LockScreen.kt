@@ -108,7 +108,7 @@ fun LockScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = uiState.appName.ifBlank { stringResource(R.string.app_locked_placeholder) },
+                text = uiState.appName.ifBlank { "Uygulama Kilitli" },
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground,
@@ -198,7 +198,7 @@ fun LockScreen(
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_fingerprint),
-                                contentDescription = stringResource(R.string.biometric_prompt_title),
+                                contentDescription = stringResource(R.string.desc_biometric_login),
                                 tint = OneUiBlue,
                                 modifier = Modifier.size(24.dp)
                             )
@@ -312,7 +312,7 @@ private fun ForgotPasswordDialog(
                             answer = it
                             isError = false
                         },
-                        label = { Text(stringResource(R.string.security_question_answer_label)) },
+                        label = { Text(stringResource(R.string.settings_recovery_answer_label)) },
                         placeholder = { Text(stringResource(R.string.security_question_answer_hint)) },
                         singleLine = true,
                         isError = isError,
@@ -377,7 +377,7 @@ private fun ForgotPasswordDialog(
                                 modifier = Modifier.size(20.dp)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text(stringResource(R.string.btn_verify_with_biometrics))
+                            Text(stringResource(R.string.btn_verify_with_fingerprint))
                         }
                     }
                 }

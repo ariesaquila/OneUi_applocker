@@ -100,8 +100,9 @@ fun SetupMasterKeyScreen(
     var firstPattern by remember { mutableStateOf<List<Int>>(emptyList()) }
     var confirmPattern by remember { mutableStateOf<List<Int>>(emptyList()) }
 
+    val securityQuestions = remember(context) { securityManager.getSecurityQuestions() }
+
     // Recovery Question State
-    val securityQuestions = remember(securityManager) { securityManager.getSecurityQuestions() }
     var selectedQuestionIndex by remember { mutableStateOf(0) }
     var customQuestion by remember { mutableStateOf("") }
     var recoveryAnswer by remember { mutableStateOf("") }
@@ -145,7 +146,7 @@ fun SetupMasterKeyScreen(
                             phase = SetupPhase.RECOVERY_QUESTION
                         }
                     } else {
-                        triggerError(context.getString(R.string.pin_mismatch))
+                        triggerError(context.getString(R.string.setup_pin_mismatch))
                         confirmPin = ""
                     }
                 }
@@ -208,7 +209,7 @@ fun SetupMasterKeyScreen(
         val question = if (selectedQuestionIndex < securityQuestions.size) {
             securityQuestions[selectedQuestionIndex]
         } else {
-            customQuestion.ifBlank { context.getString(R.string.security_question_label) }
+            customQuestion.ifBlank { securityQuestions.firstOrNull() ?: "Security Question" }
         }
         if (recoveryAnswer.isNotBlank()) {
             securityManager.setSecurityQuestion(question, recoveryAnswer)
@@ -237,7 +238,7 @@ fun SetupMasterKeyScreen(
                 IconButton(onClick = onBack) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_arrow_back),
-                        contentDescription = stringResource(R.string.btn_back),
+                        contentDescription = "Geri",
                         tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
@@ -277,7 +278,7 @@ fun SetupMasterKeyScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = stringResource(R.string.tab_pin),
+                            text = "PIN Kodu",
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = if (pinSelected) FontWeight.Bold else FontWeight.Normal,
                             color = if (pinSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
@@ -301,7 +302,7 @@ fun SetupMasterKeyScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = stringResource(R.string.tab_pattern),
+                            text = "Desen",
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = if (patternSelected) FontWeight.Bold else FontWeight.Normal,
                             color = if (patternSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
@@ -314,15 +315,15 @@ fun SetupMasterKeyScreen(
 
             // Title & Instruction
             val titleText = when (phase) {
-                SetupPhase.ENTER -> if (selectedMode == SetupMode.PIN) stringResource(R.string.pin_title_draw) else stringResource(R.string.pattern_title_draw)
-                SetupPhase.CONFIRM -> if (selectedMode == SetupMode.PIN) stringResource(R.string.pin_title_confirm) else stringResource(R.string.pattern_title_confirm)
+                SetupPhase.ENTER -> if (selectedMode == SetupMode.PIN) stringResource(R.string.setup_title_set_pin) else stringResource(R.string.setup_title_draw_pattern)
+                SetupPhase.CONFIRM -> if (selectedMode == SetupMode.PIN) stringResource(R.string.setup_title_confirm_pin) else stringResource(R.string.setup_title_confirm_pattern)
                 SetupPhase.RECOVERY_QUESTION -> stringResource(R.string.settings_security_question)
             }
 
             val subtitleText = when (phase) {
-                SetupPhase.ENTER -> if (selectedMode == SetupMode.PIN) stringResource(R.string.pin_subtitle_draw) else stringResource(R.string.pattern_subtitle_draw)
-                SetupPhase.CONFIRM -> if (selectedMode == SetupMode.PIN) stringResource(R.string.pin_subtitle_confirm) else stringResource(R.string.pattern_subtitle_confirm)
-                SetupPhase.RECOVERY_QUESTION -> stringResource(R.string.settings_security_question_desc)
+                SetupPhase.ENTER -> if (selectedMode == SetupMode.PIN) stringResource(R.string.setup_subtitle_set_pin) else stringResource(R.string.pattern_subtitle_draw)
+                SetupPhase.CONFIRM -> if (selectedMode == SetupMode.PIN) stringResource(R.string.setup_subtitle_confirm_pin) else stringResource(R.string.pattern_subtitle_confirm)
+                SetupPhase.RECOVERY_QUESTION -> stringResource(R.string.setup_subtitle_recovery)
             }
 
             Text(
@@ -373,8 +374,8 @@ fun SetupMasterKeyScreen(
                     // Question Dropdown
                     Box(modifier = Modifier.fillMaxWidth()) {
                         OutlinedTextField(
-                            value = if (selectedQuestionIndex < securityQuestions.size) {
-                                securityQuestions[selectedQuestionIndex]
+                            value = if (selectedQuestionIndex < SecurityManager.DEFAULT_SECURITY_QUESTIONS.size) {
+                                SecurityManager.DEFAULT_SECURITY_QUESTIONS[selectedQuestionIndex]
                             } else {
                                 customQuestion
                             },
@@ -384,7 +385,7 @@ fun SetupMasterKeyScreen(
                             trailingIcon = {
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_settings),
-                                    contentDescription = stringResource(R.string.security_question_label),
+                                    contentDescription = stringResource(R.string.btn_select),
                                     modifier = Modifier
                                         .size(20.dp)
                                         .clickable { isQuestionDropdownOpen = true }
@@ -430,7 +431,7 @@ fun SetupMasterKeyScreen(
                     OutlinedTextField(
                         value = recoveryAnswer,
                         onValueChange = { recoveryAnswer = it },
-                        label = { Text(stringResource(R.string.security_question_answer_label)) },
+                        label = { Text(stringResource(R.string.settings_recovery_answer_label)) },
                         placeholder = { Text(stringResource(R.string.security_question_answer_hint)) },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
@@ -454,7 +455,7 @@ fun SetupMasterKeyScreen(
                         colors = ButtonDefaults.buttonColors(containerColor = OneUiBlue)
                     ) {
                         Text(
-                            text = if (recoveryAnswer.isNotBlank()) stringResource(R.string.btn_save_and_finish) else stringResource(R.string.btn_finish),
+                            text = if (recoveryAnswer.isNotBlank()) stringResource(R.string.btn_save) else stringResource(R.string.btn_continue),
                             style = MaterialTheme.typography.labelLarge,
                             fontWeight = FontWeight.Bold
                         )
@@ -464,7 +465,7 @@ fun SetupMasterKeyScreen(
 
                     TextButton(onClick = onSetupComplete) {
                         Text(
-                            text = stringResource(R.string.btn_skip_for_now),
+                            text = stringResource(R.string.btn_skip),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

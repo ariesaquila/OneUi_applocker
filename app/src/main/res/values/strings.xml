@@ -1,13 +1,13 @@
 <resources>
     <string name="app_name">One UI AppLocker</string>
     <string name="accessibility_service_name">One UI Lock Detection Service</string>
-    <string name="accessibility_service_description">Used to detect when locked apps are opened with zero latency and display the lock screen. No personal data is read or stored.</string>
+    <string name="accessibility_service_description">Used to detect the instant a locked app is launched with zero latency and display the lock screen. No personal data is read or saved.</string>
 
     <!-- Foreground Service -->
     <string name="foreground_service_channel_name">App Lock Protection</string>
-    <string name="foreground_service_channel_desc">Ensures continuous and reliable background operation of the app locking service.</string>
+    <string name="foreground_service_channel_desc">Ensures the app lock service runs continuously and reliably in the background.</string>
     <string name="notification_protection_active_title">App Lock Active</string>
-    <string name="notification_protection_active_content">Your apps are protected by the One UI security shield.</string>
+    <string name="notification_protection_active_content">Your apps are protected with the One UI security shield.</string>
 
     <!-- Home Screen -->
     <string name="title_home">App Lock</string>
@@ -26,99 +26,100 @@
     <string name="lock_all">Lock All</string>
     <string name="unlock_all">Unlock All</string>
     <string name="home_missing_permissions_title">Required permissions missing</string>
-    <string name="home_missing_permissions_desc">Enable permissions for app lock to work properly.</string>
+    <string name="home_missing_permissions_desc">Enable permissions for app lock protection to work.</string>
     <string name="home_missing_permissions_action">Review</string>
 
     <!-- Permissions Wizard -->
     <string name="title_permissions">Required Permissions</string>
-    <string name="subtitle_permissions">Please enable the following permissions for seamless and continuous protection.</string>
-    <string name="perm_granted">Enabled</string>
+    <string name="subtitle_permissions">Please enable the following permissions for seamless, uninterrupted protection.</string>
+    <string name="perm_granted">Granted</string>
     <string name="perm_grant_action">Enable</string>
     <string name="perm_all_granted_title">All Set!</string>
     <string name="perm_all_granted_desc">All permissions have been granted. You can start locking your apps now.</string>
     <string name="btn_continue">Continue</string>
-    <string name="perm_required_badge">Required</string>
+    <string name="perm_required_tag">Required</string>
 
     <!-- Permission Items -->
-    <string name="perm_overlay_title">Appear on Top</string>
-    <string name="perm_overlay_desc">Required to display the One UI lock screen directly over locked apps when opened.</string>
-
-    <string name="perm_usage_title">Usage Access</string>
-    <string name="perm_usage_desc">Required to detect at the system level which app is being launched.</string>
-
+    <string name="perm_overlay_title">Appear on Top Permission</string>
+    <string name="perm_overlay_desc">Required to display the One UI lock screen over locked applications immediately.</string>
+    <string name="perm_usage_title">Usage Data Access</string>
+    <string name="perm_usage_desc">Required to detect which application has been launched at the system level.</string>
     <string name="perm_accessibility_title">Accessibility Service (Recommended)</string>
-    <string name="perm_accessibility_desc">Opens the lock screen with zero latency (0 ms) and minimizes battery usage.</string>
-
+    <string name="perm_accessibility_desc">Provides zero-latency (0 ms) lock screen display and minimizes battery consumption.</string>
     <string name="perm_battery_title">Ignore Battery Optimization</string>
-    <string name="perm_battery_desc">Prevents the system from putting the background protection service to sleep.</string>
-
+    <string name="perm_battery_desc">Prevents the system from sleeping or stopping the background protection service.</string>
     <string name="perm_notification_title">Notification Permission</string>
-    <string name="perm_notification_desc">Displays a background notification to ensure uninterrupted service on Android 13+.</string>
+    <string name="perm_notification_desc">Shows a notification on Android 13+ to ensure continuous background operation.</string>
 
     <!-- Restricted Settings Guide (Android 13+) -->
-    <string name="perm_restricted_title">Accessibility Permission Restricted?</string>
-    <string name="perm_restricted_desc">On Android 13+, sideloaded apps installed outside of Google Play may be marked as \"Restricted setting\".\n\nTo allow it:\n1. Tap the button below to open App Info.\n2. Tap the three dots (⋮) in the top right corner.\n3. Tap \"Allow restricted settings\" and verify your screen lock.</string>
+    <string name="perm_restricted_title">Accessibility Permission Blocked?</string>
+    <string name="perm_restricted_desc">On Android 13+, the system may block this permission as a \"Restricted setting\" for sideloaded apps.\n\nTo unblock:\n1. Tap the button below to open App Info.\n2. Tap the three dots (⋮) in the top-right corner.\n3. Tap \"Allow restricted settings\" and verify your lock screen security.</string>
     <string name="perm_restricted_action">Open App Info</string>
 
     <!-- Lock Screen -->
-    <string name="lock_title_enter_pin">Enter PIN Code</string>
+    <string name="lock_title_enter_pin">Enter PIN</string>
     <string name="lock_title_enter_pattern">Draw Pattern</string>
-    <string name="lock_subtitle">Verify to open this app</string>
+    <string name="lock_subtitle">Authenticate to unlock this app</string>
     <string name="lock_wrong_pin">Incorrect PIN, please try again</string>
     <string name="lock_wrong_pattern">Incorrect pattern, please try again</string>
     <string name="biometric_prompt_title">Authentication</string>
-    <string name="biometric_prompt_subtitle">Scan your fingerprint to unlock the app</string>
-    <string name="biometric_prompt_negative">Unlock with PIN</string>
-    <string name="app_locked_placeholder">App Locked</string>
+    <string name="biometric_prompt_subtitle">Scan fingerprint to unlock the app</string>
+    <string name="biometric_prompt_negative">Use PIN / Pattern</string>
 
     <!-- Settings -->
     <string name="title_settings">Settings</string>
     <string name="settings_section_security">Security</string>
-    <string name="settings_self_lock_title">Lock One UI AppLocker</string>
-    <string name="settings_self_lock_desc">Require PIN / Pattern or fingerprint to open this app</string>
+    <string name="settings_lock_self_app">Lock One UI AppLocker</string>
+    <string name="settings_lock_self_app_desc">Require PIN / Pattern or fingerprint when opening this app</string>
     <string name="settings_lock_type">Lock Type</string>
     <string name="settings_lock_type_pin">PIN Code</string>
     <string name="settings_lock_type_pattern">Pattern</string>
-    <string name="settings_change_credentials">Change PIN / Pattern</string>
-    <string name="settings_change_credentials_pin_desc">Update your current security PIN</string>
-    <string name="settings_change_credentials_pattern_desc">Update your current lock pattern</string>
-    <string name="settings_security_question_set">Set: %s</string>
-    <string name="settings_security_question_not_set">Not set (Add for password recovery)</string>
+    <string name="settings_change_credentials">Change Password</string>
+    <string name="settings_change_credentials_title">Change PIN / Pattern</string>
+    <string name="settings_change_pin_desc">Update your current PIN code</string>
+    <string name="settings_change_pattern_desc">Update your current lock pattern</string>
     <string name="settings_biometrics">Biometric Unlock</string>
-    <string name="settings_biometrics_desc">Unlock instantly with fingerprint or facial recognition</string>
+    <string name="settings_biometrics_desc">Instantly unlock with fingerprint or face recognition</string>
     <string name="settings_section_behavior">Lock Behavior</string>
-    <string name="settings_relock_policy">Relock Policy</string>
-    <string name="relock_immediately">Immediately (When leaving the app)</string>
+    <string name="settings_relock_policy">Relock Timeout</string>
+    <string name="relock_immediately">Immediately (Upon leaving app)</string>
     <string name="relock_screen_off">When screen turns off</string>
     <string name="relock_after_one_min">After 1 minute</string>
     <string name="relock_after_five_min">After 5 minutes</string>
     <string name="settings_vibration">Haptic Feedback</string>
-    <string name="settings_vibration_desc">Vibrate gently on key press or wrong attempt</string>
+    <string name="settings_vibration_desc">Vibrate on keypress or incorrect attempts</string>
+
+    <!-- Language -->
+    <string name="settings_section_language">App Language</string>
+    <string name="settings_language">Language</string>
+    <string name="language_system">System Default</string>
+    <string name="language_tr">Türkçe (Turkish)</string>
+    <string name="language_en">English</string>
 
     <!-- Theme / Appearance -->
     <string name="settings_section_appearance">Appearance</string>
     <string name="settings_theme">App Theme</string>
     <string name="theme_system">System Default</string>
-    <string name="theme_system_desc">Follows system light/dark mode setting automatically</string>
+    <string name="theme_system_desc">Follows device dark/light mode automatically</string>
     <string name="theme_light">Light Theme</string>
     <string name="theme_dark">Dark Theme</string>
     <string name="theme_amoled">AMOLED Black</string>
-    <string name="theme_amoled_desc">Pure black background for OLED/AMOLED screens &amp; battery saving</string>
+    <string name="theme_amoled_desc">Pure black background for OLED screens and power saving</string>
 
-    <!-- Language -->
-    <string name="settings_section_language">Language</string>
-    <string name="settings_language">App Language</string>
-    <string name="settings_language_desc">Select application display language</string>
-    <string name="language_system">System Default</string>
-    <string name="language_system_desc">Follow device language</string>
-    <string name="language_tr">Türkçe</string>
-    <string name="language_tr_desc">Turkish</string>
-    <string name="language_en">English</string>
-    <string name="language_en_desc">English</string>
-
+    <!-- System Permissions Row in Settings -->
     <string name="settings_section_permissions">SYSTEM PERMISSIONS</string>
-    <string name="settings_view_permissions_title">View Permission Status</string>
-    <string name="settings_view_permissions_desc">Check accessibility, notification, and usage permissions</string>
+    <string name="settings_permissions_view_title">View Permission Status</string>
+    <string name="settings_permissions_view_desc">Check required accessibility, notification, and usage permissions</string>
+
+    <!-- Setup Master Key Screen -->
+    <string name="setup_title_set_pin">Create Security PIN</string>
+    <string name="setup_title_draw_pattern">Draw Lock Pattern</string>
+    <string name="setup_title_confirm_pin">Confirm Your PIN</string>
+    <string name="setup_title_confirm_pattern">Confirm Pattern</string>
+    <string name="setup_subtitle_set_pin">Enter a 4-digit PIN to protect your locked apps</string>
+    <string name="setup_subtitle_confirm_pin">Re-enter your PIN to confirm</string>
+    <string name="setup_subtitle_recovery">Set a recovery question in case you forget your credentials</string>
+    <string name="setup_pin_mismatch">PINs do not match, please try again</string>
 
     <!-- Pattern Lock & Recovery -->
     <string name="pattern_title_draw">Draw Lock Pattern</string>
@@ -128,48 +129,43 @@
     <string name="pattern_min_dots">You must connect at least 4 dots</string>
     <string name="pattern_mismatch">Patterns did not match, please try again</string>
 
-    <string name="pin_title_draw">Set Security PIN</string>
-    <string name="pin_title_confirm">Confirm PIN</string>
-    <string name="pin_subtitle_draw">Enter a 4-digit PIN to lock apps</string>
-    <string name="pin_subtitle_confirm">Enter your PIN again to confirm</string>
-    <string name="pin_mismatch">PINs do not match, please try again</string>
-    <string name="btn_redraw">Redraw</string>
-
     <string name="tab_pin">PIN Code</string>
     <string name="tab_pattern">Pattern</string>
 
-    <string name="forgot_password">Forgot Password</string>
+    <string name="forgot_password">Forgot Password?</string>
     <string name="reset_credentials_title">Reset Password / Pattern</string>
-    <string name="reset_credentials_desc">Answer your security question or use biometric authentication to reset your credentials.</string>
+    <string name="reset_credentials_desc">Answer your recovery question or authenticate biometrically to reset credentials.</string>
     <string name="security_question_label">Security Question</string>
-    <string name="security_question_answer_label">Your Answer</string>
-    <string name="security_question_answer_hint">Enter recovery answer</string>
-    <string name="security_question_empty_error">Please enter an answer</string>
+    <string name="security_question_answer_hint">Enter your answer</string>
     <string name="security_question_wrong">Incorrect answer, please try again</string>
-    <string name="security_question_not_set">No security question has been set</string>
+    <string name="security_question_not_set">No recovery question configured yet</string>
     <string name="settings_security_question">Recovery Security Question</string>
-    <string name="settings_security_question_desc">Used to reset your credentials if you forget them</string>
+    <string name="settings_security_question_desc">Used to reset credentials if you forget your PIN or pattern</string>
+    <string name="settings_security_question_not_set">Not configured (Add for password recovery)</string>
+    <string name="settings_security_question_set">Configured: %s</string>
+    <string name="settings_recovery_answer_label">Recovery Answer</string>
+    <string name="settings_recovery_answer_empty">Please enter an answer</string>
     <string name="security_question_saved">Security question saved successfully</string>
+
+    <!-- Buttons & Actions -->
     <string name="btn_save">Save</string>
-    <string name="btn_save_and_finish">Save and Complete</string>
-    <string name="btn_finish">Complete</string>
-    <string name="btn_skip_for_now">Skip for Now</string>
     <string name="btn_cancel">Cancel</string>
     <string name="btn_verify">Verify</string>
     <string name="btn_reset">Reset</string>
-    <string name="btn_back">Back</string>
-    <string name="btn_verify_and_reset">Verify and Reset</string>
-    <string name="btn_verify_with_biometrics">Verify with Biometrics</string>
+    <string name="btn_skip">Skip for Now</string>
+    <string name="btn_redraw">Redraw</string>
     <string name="btn_unlock">Unlock</string>
-    <string name="cd_clear">Clear</string>
-    <string name="cd_select">Select</string>
-    <string name="cd_biometric">Biometric Authentication</string>
-    <string name="cd_backspace">Backspace</string>
+    <string name="btn_verify_and_reset">Verify &amp; Reset Password</string>
+    <string name="btn_verify_with_fingerprint">Verify with Fingerprint</string>
+    <string name="btn_back">Back</string>
+    <string name="btn_select">Select</string>
+    <string name="desc_biometric_login">Biometric Login</string>
 
-    <string-array name="default_security_questions">
+    <!-- Security Questions Array -->
+    <string-array name="security_questions">
         <item>What was the name of your first pet?</item>
         <item>What city were you born in?</item>
-        <item>What was the name of your favorite teacher?</item>
+        <item>What is your favorite teacher\'s name?</item>
         <item>What was your childhood nickname?</item>
         <item>What was the make/model of your first car?</item>
     </string-array>

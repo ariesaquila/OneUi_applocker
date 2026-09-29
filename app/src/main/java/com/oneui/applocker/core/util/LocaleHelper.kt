@@ -1,57 +1,33 @@
 package com.oneui.applocker.core.util
 
-import android.app.LocaleManager
-import android.content.Context
-import android.content.res.Configuration
-import android.os.Build
-import android.os.LocaleList
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.os.ConfigurationCompat
 import androidx.core.os.LocaleListCompat
-import com.oneui.applocker.data.model.AppLanguage
-import java.util.Locale
 
 object LocaleHelper {
 
-    fun getLocaleForLanguage(language: AppLanguage): Locale {
-        return when (language) {
-            AppLanguage.TURKISH -> Locale("tr")
-            AppLanguage.ENGLISH -> Locale("en")
-            AppLanguage.SYSTEM -> {
-                val systemLocales = ConfigurationCompat.getLocales(android.content.res.Resources.getSystem().configuration)
-                if (!systemLocales.isEmpty) {
-                    systemLocales[0] ?: Locale.getDefault()
-                } else {
-                    Locale.getDefault()
-                }
-            }
+    const val LANGUAGE_SYSTEM = "system"
+    const val LANGUAGE_TR = "tr"
+    const val LANGUAGE_EN = "en"
+
+    fun setLanguage(languageCode: String) {
+        val appLocale = when (languageCode) {
+            LANGUAGE_TR -> LocaleListCompat.forLanguageTags("tr")
+            LANGUAGE_EN -> LocaleListCompat.forLanguageTags("en")
+            else -> LocaleListCompat.getEmptyLocaleList()
         }
+        AppCompatDelegate.setApplicationLocales(appLocale)
     }
 
-    fun applyLocale(context: Context, language: AppLanguage) {
-        val localeListCompat = if (language == AppLanguage.SYSTEM) {
-            LocaleListCompat.getEmptyLocaleList()
-        } else {
-            LocaleListCompat.forLanguageTags(language.code)
+    fun getCurrentLanguageCode(): String {
+        val currentLocales = AppCompatDelegate.getApplicationLocales()
+        if (currentLocales.isEmpty) {
+            return LANGUAGE_SYSTEM
         }
-        AppCompatDelegate.setApplicationLocales(localeListCompat)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            val localeManager = context.getSystemService(LocaleManager::class.java)
-            if (language == AppLanguage.SYSTEM) {
-                localeManager?.applicationLocales = LocaleList.getEmptyLocaleList()
-            } else {
-                localeManager?.applicationLocales = LocaleList(Locale.forLanguageTag(language.code))
-            }
+        val tag = currentLocales[0]?.language ?: ""
+        return when {
+            tag.startsWith("tr", ignoreCase = true) -> LANGUAGE_TR
+            tag.startsWith("en", ignoreCase = true) -> LANGUAGE_EN
+            else -> LANGUAGE_SYSTEM
         }
-    }
-
-    fun wrapContext(context: Context, language: AppLanguage): Context {
-        val locale = getLocaleForLanguage(language)
-        Locale.setDefault(locale)
-        val config = Configuration(context.resources.configuration)
-        config.setLocale(locale)
-        config.setLayoutDirection(locale)
-        return context.createConfigurationContext(config)
     }
 }

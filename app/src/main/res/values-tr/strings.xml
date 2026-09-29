@@ -37,21 +37,17 @@
     <string name="perm_all_granted_title">Her Şey Hazır!</string>
     <string name="perm_all_granted_desc">Tüm izinler başarıyla verildi. Uygulamalarınızı hemen kilitlemeye başlayabilirsiniz.</string>
     <string name="btn_continue">Devam Et</string>
-    <string name="perm_required_badge">Zorunlu</string>
+    <string name="perm_required_tag">Zorunlu</string>
 
     <!-- Permission Items -->
     <string name="perm_overlay_title">Üzerinde Gösterme İzni</string>
     <string name="perm_overlay_desc">Kilitli bir uygulama açıldığında One UI kilit ekranını doğrudan uygulamanın üzerine getirmek için gereklidir.</string>
-
     <string name="perm_usage_title">Kullanım Erişimi</string>
     <string name="perm_usage_desc">Hangi uygulamanın başlatıldığını sistem düzeyinde tespit edebilmek için gereklidir.</string>
-
     <string name="perm_accessibility_title">Erişilebilirlik Servisi (Önerilen)</string>
     <string name="perm_accessibility_desc">Sıfır gecikmeyle (0 ms) kilit ekranını açar ve pil tüketimini en aza indirir.</string>
-
     <string name="perm_battery_title">Pil Optimizasyonunu Yoksay</string>
     <string name="perm_battery_desc">Sistemin arka plan korumasını uyku moduna alarak durdurmasını önler.</string>
-
     <string name="perm_notification_title">Bildirim İzni</string>
     <string name="perm_notification_desc">Android 13 ve üzerinde arka plan servisinin kesintisiz çalışması için bildirim gösterir.</string>
 
@@ -69,21 +65,19 @@
     <string name="biometric_prompt_title">Kimlik Doğrulama</string>
     <string name="biometric_prompt_subtitle">Kilitli uygulamayı açmak için parmak izinizi okutun</string>
     <string name="biometric_prompt_negative">PIN ile Aç</string>
-    <string name="app_locked_placeholder">Uygulama Kilitli</string>
 
     <!-- Settings -->
     <string name="title_settings">Ayarlar</string>
     <string name="settings_section_security">Güvenlik</string>
-    <string name="settings_self_lock_title">One UI AppLocker\'ı Kilitle</string>
-    <string name="settings_self_lock_desc">Bu uygulama açılırken PIN / Desen veya parmak izi iste</string>
+    <string name="settings_lock_self_app">One UI AppLocker\'ı Kilitle</string>
+    <string name="settings_lock_self_app_desc">Bu uygulama açılırken PIN / Desen veya parmak izi iste</string>
     <string name="settings_lock_type">Kilit Türü</string>
     <string name="settings_lock_type_pin">PIN Kodu</string>
     <string name="settings_lock_type_pattern">Desen</string>
-    <string name="settings_change_credentials">Şifreyi / Deseni Değiştir</string>
-    <string name="settings_change_credentials_pin_desc">Mevcut PIN kodunuzu güncelleyin</string>
-    <string name="settings_change_credentials_pattern_desc">Mevcut kilit deseninizi güncelleyin</string>
-    <string name="settings_security_question_set">Belirlendi: %s</string>
-    <string name="settings_security_question_not_set">Belirlenmedi (Şifre sıfırlama için ekleyin)</string>
+    <string name="settings_change_credentials">Şifreyi Değiştir</string>
+    <string name="settings_change_credentials_title">Şifreyi / Deseni Değiştir</string>
+    <string name="settings_change_pin_desc">Mevcut PIN kodunuzu güncelleyin</string>
+    <string name="settings_change_pattern_desc">Mevcut kilit deseninizi güncelleyin</string>
     <string name="settings_biometrics">Biyometrik Kilit</string>
     <string name="settings_biometrics_desc">Parmak izi veya yüz tanıma ile anında kilit aç</string>
     <string name="settings_section_behavior">Kilitleme Davranışı</string>
@@ -95,6 +89,13 @@
     <string name="settings_vibration">Titreşimle Geri Bildirim</string>
     <string name="settings_vibration_desc">Tuşlara basıldığında veya hatalı denemede hafif titreşim</string>
 
+    <!-- Language -->
+    <string name="settings_section_language">Uygulama Dili</string>
+    <string name="settings_language">Dil Seçimi</string>
+    <string name="language_system">Sistem Varsayılanı</string>
+    <string name="language_tr">Türkçe</string>
+    <string name="language_en">English (İngilizce)</string>
+
     <!-- Theme / Appearance -->
     <string name="settings_section_appearance">Görünüm</string>
     <string name="settings_theme">Uygulama Teması</string>
@@ -105,20 +106,20 @@
     <string name="theme_amoled">AMOLED Siyah</string>
     <string name="theme_amoled_desc">OLED ve AMOLED ekranlar için saf siyah arka plan ve pil tasarrufu</string>
 
-    <!-- Language -->
-    <string name="settings_section_language">Dil</string>
-    <string name="settings_language">Uygulama Dili</string>
-    <string name="settings_language_desc">Uygulamanın görüntüleneceği dili seçin</string>
-    <string name="language_system">Sistem Varsayılanı</string>
-    <string name="language_system_desc">Cihaz dilini takip et</string>
-    <string name="language_tr">Türkçe</string>
-    <string name="language_tr_desc">Türkçe</string>
-    <string name="language_en">English</string>
-    <string name="language_en_desc">İngilizce</string>
-
+    <!-- System Permissions Row in Settings -->
     <string name="settings_section_permissions">SİSTEM İZİNLERİ</string>
-    <string name="settings_view_permissions_title">İzin Durumunu Görüntüle</string>
-    <string name="settings_view_permissions_desc">Gerekli erişilebilirlik, bildirim ve kullanım izinlerini kontrol edin</string>
+    <string name="settings_permissions_view_title">İzin Durumunu Görüntüle</string>
+    <string name="settings_permissions_view_desc">Gerekli erişilebilirlik, bildirim ve kullanım izinlerini kontrol edin</string>
+
+    <!-- Setup Master Key Screen -->
+    <string name="setup_title_set_pin">Güvenlik PIN\'i Belirleyin</string>
+    <string name="setup_title_draw_pattern">Kilit Desenini Çizin</string>
+    <string name="setup_title_confirm_pin">PIN\'inizi Doğrulayın</string>
+    <string name="setup_title_confirm_pattern">Deseni Doğrulayın</string>
+    <string name="setup_subtitle_set_pin">Kilitli uygulamaları açmak için 4 haneli bir PIN girin</string>
+    <string name="setup_subtitle_confirm_pin">Oluşturduğunuz PIN\'i onaylamak için tekrar girin</string>
+    <string name="setup_subtitle_recovery">Şifrenizi unutursanız sıfırlayabilmek için bir kurtarma sorusu belirleyin</string>
+    <string name="setup_pin_mismatch">PIN\'ler eşleşmiyor, lütfen tekrar deneyin</string>
 
     <!-- Pattern Lock & Recovery -->
     <string name="pattern_title_draw">Kilit Desenini Çizin</string>
@@ -128,13 +129,6 @@
     <string name="pattern_min_dots">En az 4 nokta birleştirmelisiniz</string>
     <string name="pattern_mismatch">Desenler eşleşmedi, lütfen baştan deneyin</string>
 
-    <string name="pin_title_draw">Güvenlik PIN\'i Belirleyin</string>
-    <string name="pin_title_confirm">PIN\'inizi Doğrulayın</string>
-    <string name="pin_subtitle_draw">Kilitli uygulamaları açmak için 4 haneli bir PIN girin</string>
-    <string name="pin_subtitle_confirm">Oluşturduğunuz PIN\'i onaylamak için tekrar girin</string>
-    <string name="pin_mismatch">PIN\'ler eşleşmiyor, lütfen tekrar deneyin</string>
-    <string name="btn_redraw">Yeniden Çiz</string>
-
     <string name="tab_pin">PIN Kodu</string>
     <string name="tab_pattern">Desen</string>
 
@@ -142,31 +136,33 @@
     <string name="reset_credentials_title">Şifre / Desen Sıfırlama</string>
     <string name="reset_credentials_desc">Hesabınızı doğrulamak için güvenlik sorunuzu yanıtlayın veya biyometrik doğrulama kullanın.</string>
     <string name="security_question_label">Güvenlik Sorusu</string>
-    <string name="security_question_answer_label">Kurtarma Cevabınız</string>
     <string name="security_question_answer_hint">Cevabınızı girin</string>
-    <string name="security_question_empty_error">Lütfen bir cevap girin</string>
     <string name="security_question_wrong">Cevap hatalı, lütfen tekrar deneyin</string>
     <string name="security_question_not_set">Henüz bir kurtarma sorusu belirlenmemiş</string>
     <string name="settings_security_question">Kurtarma Güvenlik Sorusu</string>
     <string name="settings_security_question_desc">Şifrenizi unutursanız sıfırlayabilmeniz için kullanılır</string>
+    <string name="settings_security_question_not_set">Belirlenmedi (Şifre sıfırlama için ekleyin)</string>
+    <string name="settings_security_question_set">Belirlendi: %s</string>
+    <string name="settings_recovery_answer_label">Kurtarma Cevabınız</string>
+    <string name="settings_recovery_answer_empty">Lütfen bir cevap girin</string>
     <string name="security_question_saved">Güvenlik sorusu başarıyla kaydedildi</string>
+
+    <!-- Buttons & Actions -->
     <string name="btn_save">Kaydet</string>
-    <string name="btn_save_and_finish">Kaydet ve Tamamla</string>
-    <string name="btn_finish">Tamamla</string>
-    <string name="btn_skip_for_now">Şimdilik Atla</string>
     <string name="btn_cancel">İptal</string>
     <string name="btn_verify">Doğrula</string>
     <string name="btn_reset">Sıfırla</string>
-    <string name="btn_back">Geri</string>
-    <string name="btn_verify_and_reset">Doğrula ve Şifreyi Sıfırla</string>
-    <string name="btn_verify_with_biometrics">Biyometri ile Doğrula</string>
+    <string name="btn_skip">Şimdilik Atla</string>
+    <string name="btn_redraw">Yeniden Çiz</string>
     <string name="btn_unlock">Kilidi Aç</string>
-    <string name="cd_clear">Temizle</string>
-    <string name="cd_select">Seç</string>
-    <string name="cd_biometric">Biyometrik Giriş</string>
-    <string name="cd_backspace">Geri Al</string>
+    <string name="btn_verify_and_reset">Doğrula ve Şifreyi Sıfırla</string>
+    <string name="btn_verify_with_fingerprint">Parmak İzi ile Doğrula</string>
+    <string name="btn_back">Geri</string>
+    <string name="btn_select">Seç</string>
+    <string name="desc_biometric_login">Biyometrik Giriş</string>
 
-    <string-array name="default_security_questions">
+    <!-- Security Questions Array -->
+    <string-array name="security_questions">
         <item>İlk evcil hayvanınızın adı nedir?</item>
         <item>Doğduğunuz şehir neresidir?</item>
         <item>En sevdiğiniz öğretmeninizin adı nedir?</item>
