@@ -78,14 +78,10 @@ class AppRepository(
         }
         val resolveInfos = (packageManager.queryIntentActivities(launcherIntent, flags) +
                 packageManager.queryIntentActivities(infoIntent, flags))
-        val ownPkg = context.packageName
 
         return resolveInfos.mapNotNull { resolveInfo ->
             val activityInfo = resolveInfo.activityInfo ?: return@mapNotNull null
             val pkg = activityInfo.packageName
-
-            // Exclude our own application from the list of lockable targets
-            if (pkg == ownPkg) return@mapNotNull null
 
             val appInfo = activityInfo.applicationInfo ?: try {
                 packageManager.getApplicationInfo(pkg, 0)

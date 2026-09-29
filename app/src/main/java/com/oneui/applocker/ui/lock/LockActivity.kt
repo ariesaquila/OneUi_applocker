@@ -64,7 +64,11 @@ class LockActivity : FragmentActivity() {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 }
                 startActivity(homeIntent)
-                finish()
+                if (targetPackage == packageName) {
+                    finishAffinity()
+                } else {
+                    finish()
+                }
             }
         })
 
@@ -115,9 +119,12 @@ class LockActivity : FragmentActivity() {
     }
 
     private fun proceedToTargetApp() {
-        // Simply dismiss LockActivity. Android's activity stack will naturally and directly
-        // resume the exact target activity (e.g. Gemini, specific chat, video) that was underneath,
-        // without overriding or redirecting to root launcher activities like Google Search!
+        if (targetPackage == packageName && isTaskRoot) {
+            val mainIntent = Intent(this, com.oneui.applocker.ui.MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            }
+            startActivity(mainIntent)
+        }
         finish()
         overridePendingTransition(0, 0)
     }

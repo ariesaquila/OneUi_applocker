@@ -20,8 +20,8 @@ class AppLockAccessibilityService : AccessibilityService() {
         val targetPackage = event.packageName?.toString() ?: return
         val className = event.className?.toString() ?: ""
 
-        // Skip our own app
-        if (targetPackage == packageName) {
+        // Never intercept LockActivity itself to avoid infinite recursion
+        if (targetPackage == packageName && className.contains("LockActivity")) {
             return
         }
 

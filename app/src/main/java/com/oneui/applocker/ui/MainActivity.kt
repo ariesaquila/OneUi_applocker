@@ -1,5 +1,6 @@
 package com.oneui.applocker.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
@@ -14,11 +15,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.oneui.applocker.AppLockerApp
 import com.oneui.applocker.core.permission.PermissionHelper
+import com.oneui.applocker.core.security.AppLockStateHolder
 import com.oneui.applocker.core.theme.OneUiAppLockerTheme
+import com.oneui.applocker.core.util.DisplayRefreshRateHelper
 import com.oneui.applocker.data.model.LockSettings
 import com.oneui.applocker.data.model.ThemeMode
-import com.oneui.applocker.core.util.DisplayRefreshRateHelper
 import com.oneui.applocker.service.AppMonitorForegroundService
+import com.oneui.applocker.ui.lock.LockActivity
 import com.oneui.applocker.ui.navigation.AppNavHost
 import com.oneui.applocker.ui.navigation.Screen
 
@@ -74,6 +77,21 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         manageBackgroundService()
+        checkAppLock()
+    }
+
+    private fun checkAppLock() {
+        val app = application as AppLockerApp
+        val securityManager = app.securityManager
+        if (securityManager.isConfigured() &&
+            PermissionHelper.hasAllMandatoryPermissions(this) &&
+            AppLockStateHolder.shouldIntercept(packageName)
+        ) {
+            val intent = LockActivity.newIntent(this, packageName).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+            }
+            startActivity(intent)
+        }
     }
 
     /**

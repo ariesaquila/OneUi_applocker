@@ -76,7 +76,7 @@ object AppLockStateHolder {
      * Called when the foreground window package changes.
      */
     fun onForegroundPackageChanged(newPackage: String, isRecentsOrHome: Boolean = false) {
-        if (newPackage.isBlank() || newPackage == ownPackageName) {
+        if (newPackage.isBlank()) {
             return
         }
 
@@ -113,7 +113,7 @@ object AppLockStateHolder {
      * Ultra-fast O(1) decision whether to display the lock screen.
      */
     fun shouldIntercept(packageName: String): Boolean {
-        if (packageName.isBlank() || packageName == ownPackageName) {
+        if (packageName.isBlank()) {
             return false
         }
 
@@ -174,10 +174,16 @@ object AppLockStateHolder {
     }
 
     fun markLocked(packageName: String) {
-        unlockedSessions.remove(packageName)
-        if (activeUnlockedPackage == packageName) {
-            activeUnlockedPackage = null
-            hasEnteredTargetApp = false
+        if (packageName == ownPackageName && lastForegroundPackage == ownPackageName) {
+            // User is currently inside the app locking it; keep current session active until exit
+            markUnlocked(packageName)
+            hasEnteredTargetApp = true
+        } else {
+            unlockedSessions.remove(packageName)
+            if (activeUnlockedPackage == packageName) {
+                activeUnlockedPackage = null
+                hasEnteredTargetApp = false
+            }
         }
     }
 
